@@ -11,7 +11,6 @@
 # - add html escape/unescape 
 
 import pymongo
-from pymongo import Connection
 from pymongo.objectid import ObjectId
 import time
 import sys
@@ -21,8 +20,7 @@ from dbapi.utils import parse_datetime, parse_html_value, parse_a_href, \
 from dbapi.utils.escape import (xhtml_escape, 
     xhtml_unescape, json_decode, json_encode)
 
-connection = Connection()
-myappdb = connection['ffsdb']
+from funfunsay.extensions import mongo
 
 ## test for not unescape
 def source_unescape(str):
@@ -173,7 +171,7 @@ class Note(Model):
         #print paperId
         paperDoc=None
         if paperId!="":
-            paperDoc = myappdb.papers.find_one({"_id":ObjectId(paperId)})
+            paperDoc = mongo.db.papers.find_one({"_id":ObjectId(paperId)})
 
         doc = {"author_id":authorId, 
             "text":source_escape(source),
@@ -196,12 +194,12 @@ class Note(Model):
             "user_id_provider": userIdProvider,
             }
 
-        ids = myappdb.messages.insert(doc)
+        ids = mongo.db.messages.insert(doc)
         if paperId!="":
-            paperDoc = myappdb.papers.find_one({"_id":ObjectId(paperId)})
+            paperDoc = mongo.db.papers.find_one({"_id":ObjectId(paperId)})
             paperDoc["notes"].append({"id":str(ids), "order":len(paperDoc["notes"])+1})
             paperDoc["modified_date"] = pubDate
-            myappdb.papers.save(paperDoc)
+            mongo.db.papers.save(paperDoc)
 
         doc["_id"] = ids
 
@@ -215,7 +213,7 @@ class Note(Model):
         if noteId=="":
             raise DbapiError("Note ID must provided for update!")
 
-        doc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
+        doc = mongo.db.messages.find_one({"_id":ObjectId(noteId)})
         if doc == None:
             raise DbapiError("Cannot find the note to be updated!")
 
@@ -231,7 +229,7 @@ class Note(Model):
             doc["text"] = source_escape(source)
         doc["host_id"] = parameters.get("host_id", doc["host_id"])
 
-        status = myappdb.messages.update({"_id":ObjectId(noteId)},
+        status = mongo.db.messages.update({"_id":ObjectId(noteId)},
                                         doc, upsert=False, safe=True)
 
         return cls._gen_model(doc)
@@ -240,7 +238,7 @@ class Note(Model):
     @classmethod
     def attach_note_to_paper(cls, api, paperid, noteid):
         #print "attach_note_to_paper ", noteid
-        paperDoc = myappdb.papers.find_one({"_id": ObjectId(paperid)})
+        paperDoc = mongo.db.papers.find_one({"_id": ObjectId(paperid)})
         if paperDoc == None:
             #raise DbapiError("Cannot find the paper to be updated!")
             #don't raise error: maybe ...
@@ -254,9 +252,9 @@ class Note(Model):
         
         order = len(paperDoc['notes'])+1
         paperDoc["modified_date"] = int(time.time())
-        myappdb.papers.update({"_id":ObjectId(paperid)},
+        mongo.db.papers.update({"_id":ObjectId(paperid)},
             paperDoc, upsert=False, safe=True)
-        myappdb.papers.update({"_id":ObjectId(paperid)},
+        mongo.db.papers.update({"_id":ObjectId(paperid)},
             {'$push':{'notes': {'id':noteid, 'order':order} }})
 
         return order
@@ -265,7 +263,7 @@ class Note(Model):
     @classmethod
     def detach_note_from_paper(cls, api, paperid, noteid):
         #print "detach_note_from_paper ", noteid
-        paperDoc = myappdb.papers.find_one({"_id": ObjectId(paperid)})
+        paperDoc = mongo.db.papers.find_one({"_id": ObjectId(paperid)})
         if paperDoc == None:
             #raise DbapiError("Cannot find the paper to be updated!")
             # don't raise error: maybe the paper has been deleted!
@@ -279,7 +277,7 @@ class Note(Model):
         for note in paperDoc['notes']:
             if note['order']>notePos:
                 note['order'] -= 1
-                myappdb.messages.update(
+                mongo.db.messages.update(
                     {'_id':ObjectId(note['id']), "papers":{"$elemMatch":{"id":paperid }}},
                     {'$inc':{"papers.$.order":-1}}
                     )
@@ -287,10 +285,10 @@ class Note(Model):
         #paperDoc['notes'][:] = [d for d in paperDoc['notes'] if d.get('id') != noteid]
         # update orders first
         paperDoc["modified_date"] = int(time.time())
-        myappdb.papers.update({"_id":ObjectId(paperid)},
+        mongo.db.papers.update({"_id":ObjectId(paperid)},
             paperDoc, upsert=False, safe=True)
         # then pull
-        myappdb.papers.update({"_id":ObjectId(paperid)},
+        mongo.db.papers.update({"_id":ObjectId(paperid)},
             {'$pull':{"notes": {"id":noteid }}})
 
 
@@ -301,12 +299,12 @@ class Note(Model):
         noteId = parameters.get("id", "")
         if noteId=="":
             raise DbapiError("set note papers: note id must provide!")
-        doc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
+        doc = mongo.db.messages.find_one({"_id":ObjectId(noteId)})
         if doc == None:
             raise DbapiError("Cannot find the note to be updated!")
 
         # must do detach before attach!
-        oldPapers = myappdb.papers.find({"notes": {"$elemMatch":{"id":noteId }}})
+        oldPapers = mongo.db.papers.find({"notes": {"$elemMatch":{"id":noteId }}})
         for old in oldPapers:
             oldPaperId = str(old['_id'])
             if not oldPaperId  in oldPapers:
@@ -322,7 +320,7 @@ class Note(Model):
             if order!=None:
                 doc["papers"].append({'id':paperId, 'order':order})
 
-        status = myappdb.messages.update({"_id":ObjectId(noteId)},
+        status = mongo.db.messages.update({"_id":ObjectId(noteId)},
                                         doc, upsert=False, safe=True)
 
         return cls._gen_model(doc)
@@ -336,7 +334,7 @@ class Note(Model):
         if noteId=="":
             raise DbapiError("set note threads: note id must provide!")
 
-        doc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
+        doc = mongo.db.messages.find_one({"_id":ObjectId(noteId)})
         if doc == None:
             raise DbapiError("Cannot find the note to be updated!")
 
@@ -344,7 +342,7 @@ class Note(Model):
         for thread in parameters["threads"].split('&'):
             doc["threads"].append({'id':thread})
 
-        status = myappdb.messages.update({"_id":ObjectId(noteId)},
+        status = mongo.db.messages.update({"_id":ObjectId(noteId)},
             doc, upsert=False, safe=True)
 
         return cls._gen_model(doc)
@@ -358,7 +356,7 @@ class Note(Model):
         if noteId=="":
             raise DbapiError("remove note: note id must provide!")
 
-        noteDoc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
+        noteDoc = mongo.db.messages.find_one({"_id":ObjectId(noteId)})
         if noteDoc == None:
             raise DbapiError("Cannot find the note to be removed!")
  
@@ -366,7 +364,7 @@ class Note(Model):
         for paper in noteDoc["papers"]:
             cls.detach_note_from_paper(api, paper["id"], noteId)
        
-        status = myappdb.messages.remove({"_id":ObjectId(noteId)})
+        status = mongo.db.messages.remove({"_id":ObjectId(noteId)})
 
         return cls._gen_model(noteDoc)
 
@@ -384,9 +382,9 @@ class Note(Model):
         if userId=="":
             raise DbapiError("user id must provided!")
 
-        noteDoc = myappdb.messages.find_one({"take_in_id":noteId, "author_id":userId})
+        noteDoc = mongo.db.messages.find_one({"take_in_id":noteId, "author_id":userId})
         if noteDoc == None:
-            noteDoc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
+            noteDoc = mongo.db.messages.find_one({"_id":ObjectId(noteId)})
             if noteDoc == None:
                 ## @todo: how if the user take in just when the author delete it??
                 raise DbapiError("Cannot find the note to be taken in!")
@@ -401,18 +399,18 @@ class Note(Model):
                 noteDoc['papers'] = []
                 noteDoc['host_id'] = None
                 noteDoc['shared'] = False
-                myappdb.messages.save(noteDoc)
+                mongo.db.messages.save(noteDoc)
         #@todo: if user modified taken-in note, how?
         # so wont support it now! maybe later!
         #@fixed: now take-in notes are not allowed to be modified.
         # so just let user update the note when take-in again
         else:
             ## has taken, so update the content!
-            updatedNoteDoc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
+            updatedNoteDoc = mongo.db.messages.find_one({"_id":ObjectId(noteId)})
             if userId != str(updatedNoteDoc["author_id"]):
                 noteDoc["text"] = updatedNoteDoc["text"]
                 noteDoc["modified_date"] = updatedNoteDoc["modified_date"]
-                myappdb.messages.save(noteDoc)
+                mongo.db.messages.save(noteDoc)
 
         return cls._gen_model(noteDoc)
     
@@ -424,7 +422,7 @@ class Note(Model):
         This function is a combination of database query and self.parse()
         """
         #print "note query: parameters:", parameters
-        noteDoc = myappdb.messages.find_one({"_id":ObjectId(id)})
+        noteDoc = mongo.db.messages.find_one({"_id":ObjectId(id)})
         if noteDoc==None:
             raise DbapiError("Query one note failed on id %s"%(id))
 
@@ -443,7 +441,7 @@ class Note(Model):
         ## @fixme: now, shared/unshared-order-problem seems note exists 
         ##  here! but if shared_only, each time it may not return all 'perPage'
         ## notes
-        noteDocs = myappdb.messages.find({"papers": {"$elemMatch":{"id":paperId}}})
+        noteDocs = mongo.db.messages.find({"papers": {"$elemMatch":{"id":paperId}}})
         sortedDocs = [0] * perPage
         index = 0
         if direction==pymongo.ASCENDING:
@@ -555,10 +553,10 @@ class Note(Model):
             if sort=='papers.$.order':
                 noteDocs = cls._notes_in_paper_order(api, paperId, perPage, (page-1)*perPage, shared_only, direction)
             else:
-                noteDocs = myappdb.messages.find(spec, 
+                noteDocs = mongo.db.messages.find(spec, 
                     sort=[(sort, direction)]).skip((page-1)*perPage).limit(perPage)
         else:
-            lastDoc = myappdb.messages.find_one({"_id":ObjectId(lastIds)})
+            lastDoc = mongo.db.messages.find_one({"_id":ObjectId(lastIds)})
             if lastDoc == None:
                 raise DbapiError("note query: last ids invalid!")
 
@@ -571,7 +569,7 @@ class Note(Model):
                 noteDocs = cls._notes_in_paper_order(api, paperId, perPage, skip, shared_only, direction)
             else:
                 spec[sort]= {"$lt" if direction==pymongo.DESCENDING else "$gt": lastDoc[sort]}
-                noteDocs = myappdb.messages.find(spec, 
+                noteDocs = mongo.db.messages.find(spec, 
                     sort=[(sort, direction)]).limit(perPage)
 
         for noteDoc in noteDocs:
@@ -635,13 +633,13 @@ class Thread(Model):
             raise DbapiError("Thread name doesn't provided for add thread")
         shared = parameters.get("shared", False)
 
-        threadDoc = myappdb.threads.find_one({"author_id":authorId, "name":name})
+        threadDoc = mongo.db.threads.find_one({"author_id":authorId, "name":name})
         if threadDoc == None:
             threadDoc = {}
             threadDoc["author_id"] = authorId
             threadDoc["name"] = name
             threadDoc["shared"] = shared
-            threadDoc["_id"] = ObjectId(myappdb.threads.insert(threadDoc))
+            threadDoc["_id"] = ObjectId(mongo.db.threads.insert(threadDoc))
         else:
             api.success = False
             api.error = "db: the same name exists in the threads collection"
@@ -663,7 +661,7 @@ class Thread(Model):
         name = parameters.get("name", "")
         shared = parameters.get("shared", None) #it's 'None'! not default 'False'
 
-        threadDoc = myappdb.threads.find_one({"_id":ObjectId(threadId)})
+        threadDoc = mongo.db.threads.find_one({"_id":ObjectId(threadId)})
         if threadDoc == None:
             raise DbapiError("Thread with id %s doesn't exists" % threadId)
 
@@ -671,7 +669,7 @@ class Thread(Model):
             threadDoc["name"] = name
         if shared!= None:
             threadDoc["shared"] = shared
-        myappdb.threads.update({"_id":ObjectId(threadId)}, 
+        mongo.db.threads.update({"_id":ObjectId(threadId)}, 
             threadDoc, upsert=False, safe=True)
         modelDict = {}
         modelDict['id'] = str(threadDoc["_id"])
@@ -687,10 +685,10 @@ class Thread(Model):
         if threadId=="":
             raise DbapiError("Thread ID doesn't provided for update thread")
 
-        threadDoc = myappdb.threads.find_one({"_id":ObjectId(threadId)})
+        threadDoc = mongo.db.threads.find_one({"_id":ObjectId(threadId)})
         if threadDoc == None:
             raise DbapiError("Thread with id %s doesn't exists" % threadId)
-        myappdb.threads.remove({"_id":ObjectId(threadId)})
+        mongo.db.threads.remove({"_id":ObjectId(threadId)})
         modelDict = {}
         modelDict['id'] = str(threadDoc["_id"])
         modelDict['name'] = threadDoc["name"]
@@ -705,7 +703,7 @@ class Thread(Model):
         if authorId=="":
             raise DbapiError("Author ID doesn't provided for query threads")
 
-        threadDocs = myappdb.threads.find({"author_id":authorId})
+        threadDocs = mongo.db.threads.find({"author_id":authorId})
 
         models = []
         for threadDoc in threadDocs:
@@ -744,7 +742,7 @@ class Paper(Model):
         shared = True if shared=="True" else False ## 'None' means "not share"
         curTime = int(time.time())
 
-        paperDoc = myappdb.papers.find_one({"author_id":authorId, "name":name})
+        paperDoc = mongo.db.papers.find_one({"author_id":authorId, "name":name})
         if paperDoc == None:
             paperDoc = {}
             paperDoc["author_id"] = authorId
@@ -753,7 +751,7 @@ class Paper(Model):
             paperDoc["notes"] = []
             paperDoc["pub_date"] = curTime
             paperDoc["modified_date"] = curTime
-            paperDoc["_id"] = ObjectId(myappdb.papers.insert(paperDoc))
+            paperDoc["_id"] = ObjectId(mongo.db.papers.insert(paperDoc))
         else:
             api.success = False
             api.error = "db: the same name exists in papers collection."
@@ -780,7 +778,7 @@ class Paper(Model):
         shared = parameters.get("shared", None) #it's 'None'! not default 'False'
         shared = True if shared=="True" else False ## 'None' means "not share"
 
-        paperDoc = myappdb.papers.find_one({"_id":ObjectId(paperId)})
+        paperDoc = mongo.db.papers.find_one({"_id":ObjectId(paperId)})
         if paperDoc == None:
             raise DbapiError("Paper with id %s doesn't exists" % paperId)
 
@@ -791,7 +789,7 @@ class Paper(Model):
         if shared!= None:
             paperDoc["shared"] = shared
             paperDoc["modified_date"] = curTime
-        myappdb.papers.update({"_id":ObjectId(paperId)}, 
+        mongo.db.papers.update({"_id":ObjectId(paperId)}, 
             paperDoc, upsert=False, safe=True)
         modelDict = {}
         modelDict['id'] = str(paperDoc["_id"])
@@ -809,10 +807,10 @@ class Paper(Model):
         if paperId=="":
             raise DbapiError("Paper ID doesn't provided for update paper")
 
-        paperDoc = myappdb.papers.find_one({"_id":ObjectId(paperId)})
+        paperDoc = mongo.db.papers.find_one({"_id":ObjectId(paperId)})
         if paperDoc == None:
             raise DbapiError("Thread with id %s doesn't exists" % paperId)
-        myappdb.papers.remove({"_id":ObjectId(paperId)})
+        mongo.db.papers.remove({"_id":ObjectId(paperId)})
         modelDict = {}
         modelDict['id'] = str(paperDoc["_id"])
         modelDict['name'] = paperDoc["name"]
@@ -846,7 +844,7 @@ class Paper(Model):
 
         #print "spec:", spec
 
-        paperDocs = myappdb.papers.find(spec, sort=[("modified_date", pymongo.DESCENDING)]).limit(0)
+        paperDocs = mongo.db.papers.find(spec, sort=[("modified_date", pymongo.DESCENDING)]).limit(0)
 
         models = []
         for paperDoc in paperDocs:
@@ -893,7 +891,7 @@ class Paper(Model):
         #print _("Position from %d to %d changed, inc %d, min %d, max %d"%(startPos, stopPos, incValue, min, max))
         #flash(_("Position from %d to %d changed"%(startPos, stopPos)))
 
-        paperDoc = myappdb.papers.find_one({"_id":ObjectId(paperId),
+        paperDoc = mongo.db.papers.find_one({"_id":ObjectId(paperId),
              "author_id":authorId});
         if paperDoc==None:
             raise DbapiError("Cannot find paper to change order")
@@ -903,19 +901,19 @@ class Paper(Model):
         for note in paperDoc['notes']:
             if note['order']==startPos:
                 note['order'] = stopPos
-                myappdb.messages.update(
+                mongo.db.messages.update(
                     {'_id':ObjectId(note['id']), "papers":{"$elemMatch":{"id":paperId }}}, 
                     {'$set':{"papers.$.order":stopPos}}
                     )
             elif note['order']>=min and note['order']<max:
                 note['order']+=incValue
-                myappdb.messages.update(
+                mongo.db.messages.update(
                     {'_id':ObjectId(note['id']), "papers":{"$elemMatch":{"id":paperId }}},
                     {'$inc':{"papers.$.order":incValue}}
                     )
 
         paperDoc["modified_date"] = int(time.time())
-        status = myappdb.papers.update({'_id':paperDoc['_id']}, paperDoc, upsert= False, safe = True)
+        status = mongo.db.papers.update({'_id':paperDoc['_id']}, paperDoc, upsert= False, safe = True)
         #print status
 
         modelDict = {}
@@ -1019,7 +1017,7 @@ class OAuth2(Model):
         provider = parameters.get('provider', None)
         if provider == None:
             raise DbapiError("Must specify 'provider' to get_key")
-        oauthDoc = myappdb.oauths.find_one({'provider':provider})
+        oauthDoc = mongo.db.oauths.find_one({'provider':provider})
         return {
                 "provider":provider,
                 "app_key":oauthDoc["app_key"], 
@@ -1054,7 +1052,7 @@ class User(Model):
             "invitates": [],
 
         }
-        invitates = myappdb.invitates.find({"author_id":doc["_id"]})
+        invitates = mongo.db.invitates.find({"author_id":doc["_id"]})
         for i in invitates:
             modelDict["invitates"].append({
                 "code":i["code"],
@@ -1082,14 +1080,14 @@ class User(Model):
         userDoc = None
 
         if provider and user_id_provider:
-            userDoc = myappdb.users.find_one({"providers": 
+            userDoc = mongo.db.users.find_one({"providers": 
                 { "$elemMatch": {"provider":provider, "id":user_id_provider} } 
                 })
             #print "3:", userDoc
         elif login!=None:
-            userDoc = myappdb.users.find_one({"$or": [{"_id":login}, {"email":login}]})
+            userDoc = mongo.db.users.find_one({"$or": [{"_id":login}, {"email":login}]})
         elif id != None or email != None:
-            userDoc = myappdb.users.find_one({"$or": [{"_id":id}, {"email":email}]})
+            userDoc = mongo.db.users.find_one({"$or": [{"_id":id}, {"email":email}]})
         else:
             raise DbapiError("Must specify 'id' or 'email' or 'login' to authenticate user!")
 
@@ -1121,7 +1119,7 @@ class User(Model):
             if provider and user_id_provider:
                 userid = str(ObjectId())
 
-        userDoc = myappdb.users.find_one({"_id":userid})
+        userDoc = mongo.db.users.find_one({"_id":userid})
         if userDoc==None and not upsert:
             raise DbapiError("user %s not found!" % userid)
 
@@ -1153,7 +1151,7 @@ class User(Model):
         if invitation_code != None and invitation_code!="OPENINVITATION":
             userDoc["invitation_code"] = invitation_code
             # disable used invitation code
-            myappdb.invitates.update({"code":invitation_code, "used":'False'}, 
+            mongo.db.invitates.update({"code":invitation_code, "used":'False'}, 
                                   { '$set':{"used":name, "use_time":reg_date} }, 
                                   multi=True, upsert= False, safe = True);
         locale = parameters.get('locale', None)
@@ -1171,7 +1169,7 @@ class User(Model):
         
         #print "2:", userDoc
 
-        myappdb.users.update({"_id":userid}, userDoc, upsert=True)
+        mongo.db.users.update({"_id":userid}, userDoc, upsert=True)
 
 
         return cls._gen_model(api, userDoc)
@@ -1213,7 +1211,7 @@ class User(Model):
         if not userid or not provider or not userid_provider:
             raise DbapiError("remove provider insufficient parameter")
 
-        userDoc = myappdb.users.find_and_modify({"_id":userid},
+        userDoc = mongo.db.users.find_and_modify({"_id":userid},
             { '$pull':{"providers":{"id":userid_provider, "provider": provider}} },
             new = True
         )
@@ -1247,7 +1245,7 @@ class User(Model):
             ):
             raise DbapiError("upsert_provider Fail: userid and provider must not be None")
 
-        userDoc = myappdb.users.find_one({"_id":userid})
+        userDoc = mongo.db.users.find_one({"_id":userid})
         if userDoc==None:
             raise DbapiError("user %s not found!" % userid)
 
@@ -1259,7 +1257,7 @@ class User(Model):
             if not (next_count and next_cursor):
                 raise DbapiError("both count/cursor must provided for next count/cursor!")
 
-            r = myappdb.users.update({"_id":userid,
+            r = mongo.db.users.update({"_id":userid,
                 "providers":{
                     "$elemMatch":{"id":userid_provider, "provider": provider }
                     }
@@ -1271,7 +1269,7 @@ class User(Model):
                 }, safe=True, upsert=False)
             #print r
             #like {u'updatedExisting': True, u'connectionId': 85, u'ok': 1.0, u'err': None, u'n': 1}
-            userDoc = myappdb.users.find_one({"_id":userid,
+            userDoc = mongo.db.users.find_one({"_id":userid,
                 "providers":{
                     "$elemMatch":{"id":userid_provider, "provider": provider }
                     }
@@ -1299,7 +1297,7 @@ class User(Model):
 
 
         #refer: SO-10277174
-        userDoc = myappdb.users.find_one({"_id":userid,
+        userDoc = mongo.db.users.find_one({"_id":userid,
             "providers":{
                 "$elemMatch":{"id":userid_provider, "provider": provider }
                 }
@@ -1307,7 +1305,7 @@ class User(Model):
 
         #insert new or update
         if userDoc is None:
-            r = myappdb.users.update({"_id":userid},
+            r = mongo.db.users.update({"_id":userid},
                 {'$push':{
                     'providers': profile
                     },
@@ -1317,7 +1315,7 @@ class User(Model):
                 }, safe=True, upsert=False)
             #print r
         else:
-            r = myappdb.users.update({"_id":userid,
+            r = mongo.db.users.update({"_id":userid,
                 "providers":{
                     "$elemMatch":{"id":profile["id"], "provider": provider }
                     }
@@ -1328,7 +1326,7 @@ class User(Model):
                 }, safe=True, upsert=False)
             #print r
 
-        userDoc = myappdb.users.find_one({"_id":userid})
+        userDoc = mongo.db.users.find_one({"_id":userid})
         return cls._gen_model(api, userDoc)
 
 
@@ -1366,7 +1364,7 @@ class Counter(Model):
         if threadId != "":
             spec["threads"] = {"$elemMatch":{"id":threadId }}
 
-        return myappdb.messages.find(spec).count()
+        return mongo.db.messages.find(spec).count()
         
 
     @classmethod

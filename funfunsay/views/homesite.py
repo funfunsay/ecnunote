@@ -20,10 +20,7 @@ from flask.ext.login import (login_required, login_user, current_user,
 from funfunsay.models import User
 from funfunsay.extensions import cache
 from funfunsay.config import DefaultConfig, APP_NAME
-import pymongo
-from pymongo import Connection
-connection = Connection()
-myappdb = connection['ffsdb']
+from funfunsay.extensions import mongo
 
 
 homesite = Blueprint('homesite', __name__
@@ -129,7 +126,7 @@ def search():
 def user_profile():
     invitation_code = request.args.get('invitation_code', '')
     #print invitation_code
-    invitates = myappdb.invitates.find({"author_id":current_user.id})
+    invitates = mongo.db.invitates.find({"author_id":current_user.id})
     return render_template('uprofile.html', 
         user = current_app.dbapi.get_user_profile(id=current_user.id),
         invitation_code=invitation_code, invitates=invitates)
@@ -140,7 +137,7 @@ def user_profile():
 def unlink_provider():
     invitation_code = request.args.get('invitation_code', '')
     #print invitation_code
-    invitates = myappdb.invitates.find({"author_id":current_user.id})
+    invitates = mongo.db.invitates.find({"author_id":current_user.id})
     user_id_provider = request.args.get('user_id_provider')
     user_id = current_user.id
     provider = request.args.get('provider')
@@ -165,7 +162,7 @@ def generate_invitation_code():
     code = hex(int(str(cur_time)[::-1]) + random.randint(1, 100))[2:10]
     #print code
     code_doc = User.new_invitation_code_document(current_user.id, code)
-    myappdb.invitates.insert(code_doc)
+    mongo.db.invitates.insert(code_doc)
 
     return redirect(url_for('homesite.user_profile', invitation_code=code))
 

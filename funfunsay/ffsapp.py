@@ -15,7 +15,7 @@ from flask import (Flask, request, render_template, g, session, url_for)
 from flask.ext.babel import Babel
 from funfunsay.config import DefaultConfig, APP_NAME
 from funfunsay.views import homesite, funnote
-from funfunsay.extensions import cache
+from funfunsay.extensions import cache, mongo
 from flask.ext.login import login_user, current_user, logout_user
 from funfunsay import utils
 from funfunsay.models import User
@@ -100,6 +100,7 @@ def configure_extensions(app):
     #store = DictStore()
     ## this will replace the app's session handling
     #KVSessionExtension(store, app)
+    mongo.init_app(app, "FUNFUNSAY")
 
     # cache
     cache.init_app(app)
