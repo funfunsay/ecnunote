@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 this is the main app entry.
+todo: Remove all sub-apps.
 """
 from __future__ import with_statement
 
