@@ -1,0 +1,20 @@
+<div>
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">&times;</button>
+    <h3>{{_("Select Papers")}}</h3>
+  </div>
+  <div class="modal-body"  style="overflow-y: scroll;height:365px;">
+  <ul>
+    {% for paper in papers %}
+    <li>
+    <label class="checkbox">
+    <input class="checkbox-paper" type="checkbox" value="" id="checkPaper_{{paper.id}}" 
+        {{'checked' if message.papers.find(paper.id)!=-1}} />
+    {{paper.name}}
+    </label>
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+</div>
+

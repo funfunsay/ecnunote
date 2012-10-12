@@ -1,0 +1,1160 @@
+﻿{% from "macros/_misc.html" import render_threadli, render_paperli %}
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="" lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>{{_('Note')}} | {{_("Notebook on the Cloud")}}</title>
+    <meta name="author" content="Brent Jiang">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    {% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-responsive.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% endblock %}
+</head>
+
+<body data-spy="scroll" data-target=".subnav" data-offset="50">
+<!-- Navbar
+================================================== -->
+    <nav class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="{{ url_for('homesite.home') }}">云笔记本</a>
+
+    <!--user login control-->
+        {% if current_user.is_authenticated() %}
+          <div class="btn-group pull-right">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="icon-user"></i> {{ current_user.name }}
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('homesite.user_profile') }}">{{_("User Profile")}}</a></li>
+              <li class="divider"></li>
+              <li><a href="{{ url_for('homesite.logout') }}">{{_("Sign Out")}}</a></li>
+            </ul>
+          </div>
+        {% elif login_form is defined %}
+        <ul class="pull-right">
+            <li><a class="btn" title="{{_('Sign Up')}}" href="{{ url_for('homesite.register') }}">{{_("Sign Up")}}</a></li>
+        </ul>
+        <form class='navbar-form pull-right' method='POST' action="{{ url_for('homesite.login') }}">
+            {{ login_form.hidden_tag() }}
+            {{ login_form.next }}
+            {{ login_form.login(class_='input-small', placeholder=_("Username")) }}
+            {{ login_form.password(class_='input-small', placeholder=_("Password")) }}
+            <button type="submit" class="btn btn-primary btn-small">{{_("Log in")}}</button>
+        </form>
+        {% endif %}
+        <!--/user login control-->
+         <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="/n/fast">{{_("My Notes")}}</a></li>
+              <li><a href="#about">{{_("About")}}</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </nav>
+
+<!-- Masthead
+================================================== -->
+<div class="container">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3">
+                <!--Sidebar content-->
+                <br />
+                <div class="tabbable">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#1" data-toggle="tab">{{_("Threads")}}</a></li>
+                        <li class=""><a href="#2" data-toggle="tab">{{_("Papers")}}</a></li>
+                        <!--<li class=""><a href="#3" data-toggle="tab">{{_("Times")}}</a></li>-->
+                        <!--<li class=""><a href="#3" data-toggle="tab">{{_("Tags")}}</a></li>-->
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="1">
+                            <div class="input-append">
+                                <p class="label">{{_("Add new thread:")}}</p>
+                                <input class="span2" id="newThreadName" size="16" name="name" type="text" placeholder="{{_('+ New Thread Title')}}">
+                                <p><a class="btn" href="#" id="addNewThread">{{_("Add")}}</a></p>
+                            </div>
+                            <!-- All Threads -->
+                            <p class="label">{{_("Existing threads:")}}</p>
+                            <div class="" id="threadList">
+                                <ul class="nav nav-list" id="threadList_ul">
+                                    <li class="navLi"><a href="#" id="noteFiltersAll">
+                                        <i class="icon-home"></i>{{_("All Notes")}}</a> </li>
+                                    {%for thread in threads %}
+                                    {{ render_threadli(thread.id, thread.name)}}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tab-pane " id="2">
+                            <div class="input-append">
+                                    <p class="label">{{_("Add new paper:")}}</p>
+                                    <input class="span2" id="newPaperName" size="16" name="name" type="text" placeholder="{{_('+ New Paper Title')}}">
+                                    <p><a class="btn" href="#" id="addNewPaper">{{_("Add")}}</a></p>
+                            </div>
+							<br />
+                            <!-- All Papers -->
+                            <p class="label">{{_("Existing papers:")}}</p>
+                            <div class="" id="paperList">
+                                <ul class="nav nav-list" id="paperList_ul">
+                                    {%for paper in papers %}
+                                    {{ render_paperli(paper.id, paper.name)}}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- 
+                        博客目录
+                        -->
+                        <div class="tab-pane" id="3">
+                            <div class="input-append">
+                                    <p class="label">{{_("Add new weblog category:")}}</p>
+                                    <input class="span2" id="Text1" size="16" name="name" type="text" placeholder="{{_('+ New Paper Title')}}">
+                                    <p><a class="btn" href="#" id="a1">{{_("Add")}}</a></p>
+                            </div>
+							<br />
+                            <!-- All Papers -->
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <h2>
+                        &nbsp;</h2>
+                </div>
+                <footer class="footer">
+        <h5><small>&copy; 2011 ECNU</small>
+        </h5>
+            <h4><small>{{_("Notebook on the Cloud")}}</small></h4>
+        {% block footer %}
+        {% endblock %}
+        </footer>
+            </div>
+            <div class="span9">
+                <!--Body content-->
+                <div class="row">
+                    <h2>
+                        &nbsp;</h2>
+                </div>
+                <header class="" id="overview">
+<div class="">
+    <ul class="nav nav-pills">
+        <li><h3>&nbsp;{{_("Filters:")}}</h3></li>
+        <li class="dropdown">
+            <a id="ul-filters-sort" href="#" data-toggle="dropdown" class="dropdown-toggle">{{_("Modified Date")}}<b class="caret"></b></a>
+
+            <ul class="dropdown-menu">
+                <li class="filters-sort" data-sort="date_created"><a href="#">{{_("Created Date")}}</a></li>
+                <li class="filters-sort active" data-sort="date_modified"><a href="#">{{_("Modified Date")}}</a></li>
+                <li class="filters-sort paper-specific hide" data-sort="order_in_paper"><a href="#">{{_("Order")}}</a></li>
+            </ul>
+        </li>
+
+        <li class="dropdown">
+            <a id="ul-filters-sort-direction" href="#" data-toggle="dropdown" class="dropdown-toggle">{{_("Descending")}}<b class="caret"></b></a>
+
+            <ul class="dropdown-menu">
+                <li class="filters-sort-direction" data-direction="ascending"><a href="#">{{_("Ascending")}}</a></li>
+                <li class="filters-sort-direction active" data-direction="descending"><a href="#">{{_("Descending")}}</a></li>
+            </ul>
+        </li>
+        <!--<li>    
+         <ul class="nav">
+            <li class="">
+                <div class="input-append">
+                    <input class="span2" id="filterSearchCriteria" size="16" type="text" placeholder="{{_('Search Criteria')}}">
+                </div>
+            </li>
+        </ul>
+</li>-->
+        <li><a class="" id="apply_filters" href="#">{{_("Apply")}}</a></li>
+        <li><a class="" id="clear_filters" href="#">{{_("Clear Criteria")}}</a></li>
+    </ul>
+</div>
+    <div class="well paper-specific hide">
+        <button id="sharePaper" shared="{{'true'}}" 
+            class="btn {{'active'}} switch-share-paper paper-specific hide pull-right"
+            data-toggle="button">
+            {{_("share it!")}}
+        </button>
+		<h5>{{_("Use 'order_in_paper' and 'ascending' filter for drag:")}}<label class="paper-specific hide disabled" href="#" id="enableDragDrop">{{_("not dragable")}}</label></h5>
+    </div>
+<br />
+                </header>
+                <section id="pageHeader">{% block pageheader %}{% endblock %}</section>
+
+                <div class="pull-right">
+                    <a class="btn btn-primary btn-large" id="addNewNote">{{_("Add New Note")}}</a>
+                </div>
+                <br />
+                <br />
+                <br />
+                <section id="bodySection">
+                    <ul class="sortable ul-note-list" id="noteList" no-more="false">
+					</ul>
+                    <div class="row pull-right" id="lazyLoaderDiv"></div>
+                </section>
+                <br />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal hide" id="modalThreads">
+  <div id="modalThreadsAjaxContainer">
+  </div>
+  <div class="modal-footer">
+    <a id="Action1"  href="#" class="update-threads btn btn-primary">{{_("OK")}}</a>
+    <a href="#" data-dismiss="modal" class="btn">{{_("Cancel")}}</a>
+    <div id="modalThreadsStatus"></div>
+  </div>
+</div>
+<!--modalThreads -->
+
+<div class="modal hide" id="modalPapers">
+  <div id="modalPapersAjaxContainer">
+  </div>
+  <div class="modal-footer">
+    <a id="Action2"  href="#" messageid="" class="update-papers btn btn-primary">{{_("OK")}}</a>
+    <a href="#" data-dismiss="modal" class="btn">{{_("Cancel")}}</a>
+    <div id="modalPapersStatus"></div>
+  </div>
+</div>
+<!--modalPapers -->
+
+<!-- /container -->
+<!-- In-Place PageDown Note Editor
+================================================== -->
+<div class="bigger hide" id="inPlacePageDownEditor">
+    <div class="note-stop-propagation">
+        <div>
+            <div id="wmd-button-bar"></div>
+            <textarea class="wmd-input" id="wmd-input">
+            </textarea>
+        <a href="#" class="btn" id="inPlacePageDownEditorSave" messageid="">{{_("Save")}}</a>
+        <a href="#" class="btn btn-primary" id="inPlacePageDownEditorClose" messageid="" tooltip="{{_("Save and stop editting")}}">{{_("Save & Close")}}</a>
+		<span id="inPlaceSaveState"></span>
+            <div id="wmd-preview" class="wmd-preview"></div>
+        </div>
+    </div>
+</div>
+<!-- /In-Place editor-->
+
+<!-- modal Rename -->
+<div class="modal hide" id="modalRename">
+    <div class="modal-header">
+    <button class="close" data-dismiss="modal">&times;</button>
+    <h3>{{_("Rename:")}}<small id="oldName"></small></h3>
+    </div>
+    <div class="modal-body">
+    <input class="span5" id="newName" size="16" name="name" type="text" placeholder="{{_('+ New Name')}}">
+    </div>
+    <div class="modal-footer">
+    <a id="renameAction" data-dismiss="modal" href="#" class="btn btn-primary">{{_("OK")}}</a>
+    <a href="#" data-dismiss="modal" class="btn">{{_("Cancel")}}</a>
+    </div>
+</div>
+
+<!-- myModal -->
+<div class="modal hide" id="myModal">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+        <h3>
+            {{_("Confirm delete")}}</h3>
+    </div>
+    <div class="modal-body">
+        <p>
+            {{_("Delete this note?")}}</p>
+    </div>
+    <div class="modal-footer">
+        <a id="modalAction" data-dismiss="modal" href="#" class="btn btn-primary">{{_("OK")}}</a>
+        <a href="#" data-dismiss="modal" class="btn">{{_("Cancel")}}</a>
+    </div>
+</div>
+
+<!-- Le javascript
+================================================== -->
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/google-code-prettify/prettify.js') }}"></script>
+<!-- Placed at the end of the document so the pages load faster -->
+<!--<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+Include bootstrap.js will cause dropdown not work!
+-->
+<!-- These js files is ordered according to official website 
+================================================== -->
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-transition.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-alert.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-modal.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-dropdown.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-scrollspy.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-tab.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-tooltip.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-popover.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-button.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-collapse.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-carousel.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-typeahead.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/application.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='pagedown/Markdown.Converter.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='pagedown/Markdown.Sanitizer.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='pagedown/Markdown.Editor.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/fastnote.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-1.8.18.custom.min.js') }}"></script>
+<script type="text/javascript">
+
+    var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+    /*-begin-*/
+    /*在IE中，在Fastnote页面添加笔记后刷新页面，新增加的笔记无法显示*/
+    /*在Firefox中不会出现该问题*/
+    /*现在采用了这句话就解决了IE中的问题*/
+    $.ajaxSetup({cache: false});
+    /*-end-*/
+
+
+    $(document).ready(function () {
+        $('a#homeToSubsite').attr("href", "{{url_for('funnote.fastnote')}}");
+        //alert('here');
+    });
+
+	/*see stackoverflow: 442404*/
+	function getOffset( el ) {
+		var _x = 0;
+		var _y = 0;
+		while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+			_x += el.offsetLeft - el.scrollLeft;
+			_y += el.offsetTop - el.scrollTop;
+			el = el.offsetParent;
+		}
+		return { top: _y, left: _x };
+	}
+	/*var x = getOffset( document.getElementById('yourElId') ).left; */
+	/*so-442404*/
+	
+	/*enable editor*/
+	var converter1 = Markdown.getSanitizingConverter();
+	var editor1 = new Markdown.Editor(converter1);
+	editor1.run();
+	/*$("#wmd-input").focus(function(){
+			// Select field contents
+			// see: http://jquery-howto.blogspot.com/2009/04/select-text-in-input-box-on-user-select.html
+			if(this.value == "{{_('empty message')}}"){
+				this.select();
+			}else if (this.getSelection){
+				this.getSelection().removeAllRanges();
+				this.focus();
+			}
+		});*/
+
+    var saveEditingNote = function(afterSaveSuccess, afterSaveError){
+
+        afterSaveSuccess = afterSaveSuccess || function(){};
+        afterSaveError = afterSaveError || function(){};
+        var noteid = $(window).data('inPlaceEditingID') || '';
+        if(noteid=='')
+            return;
+
+		var original = $('#wmd-input').val();
+		var original_before_edit = $("div#note_"+noteid).attr('original');
+		if( original==original_before_edit )
+		{
+			/*no need to post save_message*/
+            $("#inPlaceSaveState").html("{{_('Saved.')}}");
+			$("#inPlaceSaveState").fadeOut(2000, function(e){
+				$("#inPlaceSaveState").html('');
+				$("#inPlaceSaveState").show();
+			});
+
+            /*do after save success*/
+			afterSaveSuccess();
+		}else{
+            $("#inPlaceSaveState").html("{{_('Saving ...')}}");
+			/*save and update current editing note*/
+			$.ajax({
+                type: "post",
+                url:"{{url_for('funnote.save_message')}}", 
+                data: {
+					activethreadid: $(window).data('activethreadid'),
+					activepaperid: $(window).data('activepaperid'),
+					messageid: noteid,
+					source: original
+    			}, 
+                success: function(data){
+					$("div#note_"+noteid).attr('original', original);
+                    $("strong#modified_" + noteid).html("{{format_datetime_now()}}");
+                    $("#inPlaceSaveState").html("{{_('Saved.')}}");
+				    $("#inPlaceSaveState").fadeOut(2000, function(e){
+					    $("#inPlaceSaveState").html('');
+					    $("#inPlaceSaveState").show();
+				    });
+					
+					afterSaveSuccess();
+				},	
+                error: function(){
+                    // do nothing!
+                    // @todo: provide float warning message!
+                    $("#inPlaceSaveState").html("{{_('Not saved.')}}");
+                    afterSaveError();
+                },
+            });/*$.ajax*/
+        }
+    };
+	
+	var kickInPlaceEdit = function(saveCurrentEditing, nextEditingNoteId, onFinishSuccess, onFinishError){
+		// SO: 894860
+		//alert(saveCurrentEditing);
+		nextEditingNoteId = nextEditingNoteId || '';
+		var editingNoteId = $(window).data('inPlaceEditingID') || '';
+        onFinishSuccess = onFinishSuccess || function(){};
+        onFinishError = onFinishError || function(){};
+        //alert(scrollToGoodPosition);
+        //scrollToGoodPosition = scrollToGoodPosition || false;
+        //alert(scrollToGoodPosition);
+        	
+        /*move in-place editor to new note's field*/
+	    var _attachInPlaceEdit = function(noteid){
+            if(noteid==''){
+                return;
+            }
+
+		    var editingnoteid = $(window).data('inPlaceEditingID') || '';
+            if(editingnoteid == noteid)
+                return;
+
+            var posTop = $("#macro_li_"+noteid).position().top-50;
+		    //alert(posTop);
+            $(window).data('inPlaceEditPosTop', posTop);
+		    $(window).data('inPlaceEditingID', noteid);
+		    $("#wmd-input").val($("div#note_"+noteid).attr('original'));
+		    $("#wmd-preview").html($("div#note_"+noteid).html());
+		    $('#inPlacePageDownEditorSave').attr("messageid", noteid);
+		    $('#inPlacePageDownEditorClose').attr("messageid", noteid);
+	        $("div#note_"+noteid).html( '' );
+	        $('#inPlacePageDownEditor').children().first().appendTo($("div#note_"+noteid));
+		    $("#wmd-input").focus();
+            $(window).scrollTop(posTop);
+	    };
+
+        /*restore in-place editor into hidden field*/
+        var _detachCurrentEditor = function(){
+            var editingNoteId = $(window).data('inPlaceEditingID') || '';
+            var original = $('#wmd-input').val();
+            if(editingNoteId!='' && nextEditingNoteId!=editingNoteId){
+                /*restore in place editor*/
+		        $("div#note_"+editingNoteId).children().first().appendTo($('#inPlacePageDownEditor'));
+		        $("div#note_"+editingNoteId).html( converter1.makeHtml(original) );
+		        $(window).data('inPlaceEditingID', '');
+            }
+        }
+		
+		var _scrollToGoodPosition = function(){
+            var posTop = $(window).data('inPlaceEditPosTop') || 0;
+            if(posTop != 0)
+                $(window).scrollTop(posTop);
+		};
+
+		//alert(editingNoteId);
+		if (editingNoteId == '')
+		{
+            _attachInPlaceEdit(nextEditingNoteId);
+
+            onFinishSuccess();
+		}else{
+            /*currently a note is being edited*/
+
+            if(saveCurrentEditing==false){
+                /**/
+                if(nextEditingNoteId != editingNoteId){
+                    _detachCurrentEditor();
+                    if(nextEditingNoteId==''){
+                        //if(scrollToGoodPosition==true){
+                           _scrollToGoodPosition();
+                        //}
+                    }else{
+                        _attachInPlaceEdit(nextEditingNoteId);
+                    }
+
+                    onFinishSuccess();
+                }
+            }else{
+                /*save note*/
+                saveEditingNote(function(){/*success*/
+                    if(nextEditingNoteId != editingNoteId){
+                        _detachCurrentEditor();
+                        if(nextEditingNoteId==''){
+                            //if(scrollToGoodPosition==true){
+                               _scrollToGoodPosition();
+                            //}
+                        }else{
+                            _attachInPlaceEdit(nextEditingNoteId);
+                        }
+
+                        onFinishSuccess();
+                    }
+                },
+                function(){/*error*/
+                    if(nextEditingNoteId != editingNoteId)
+                        // force to scroll
+                        _scrollToGoodPosition();
+                        onFinishError();
+                });
+            }
+		}
+	};
+	
+
+    $(document).ready(function () {
+	
+		/*delegate*/
+		/* add new note */
+		$("#addNewNote").on("click", function(e){
+            /*set flag to avoid multiple clicks*/
+            if($(window).data('addNewNoteClicked')==true)
+                return;
+
+            if ($(window).data('ajaxready') == false) 
+                return;
+
+            $(window).data('addNewNoteClicked', true);
+
+            /*first, save and close current editing note*/
+			kickInPlaceEdit(true, '', function(){ /*onFinishSuccess*/      
+			    /*add note*/
+			    $.post("{{url_for('funnote.save_message')}}",
+			    {
+				    activethreadid: $(window).data('activethreadid'),
+				    activepaperid: $(window).data('activepaperid'),
+				    messageid: "",
+				    source: " ",
+			    },
+			    function (data) {
+				    /*add element for new message*/
+                    if($(window).data('activepaperid')!='' 
+                        && $(window).data('direction')=='ascending'){
+				        $('#noteList').append(data.notes);
+				        $('#noteList').children().last().hide();
+				        $('#noteList').children().last().fadeIn(1200);
+                    }
+                    else{
+				        $('#noteList').prepend(data.notes);
+				        $('#noteList').children().first().hide();
+				        $('#noteList').children().first().fadeIn(1200);
+                    }
+                    $(window).data('addNewNoteClicked', false);
+				    kickInPlaceEdit(true, data.messageid);
+			    });
+            },function(){/*onFinishError*/
+                $(window).data('addNewNoteClicked', false);
+            });
+		});
+		
+		/*click close editor: save and close*/
+		$("body").delegate("a#inPlacePageDownEditorClose", 'click', function(e){
+			kickInPlaceEdit(true);
+		});
+		
+		/*click another note's edit*/
+		$("body").delegate("a.note-inplace-edit", 'click', function(e){
+			var self = this;
+			var noteid = $(self).attr("messageid");
+			var editingnoteid = $(window).data('inPlaceEditingID');
+			//alert(editingnoteid);
+			if(editingnoteid == noteid){
+				/*do nothing*/
+                //alert('do nothing');
+				return;
+			}
+			
+			kickInPlaceEdit(true, noteid);
+		});
+	});
+	
+	
+	<!-- Handling save old note -->
+    $(document).ready(function () {
+        $("body").delegate('#inPlacePageDownEditorSave', 'click', function (e) {
+			var self = this;
+            var messageid = $(self).attr("messageid");
+            kickInPlaceEdit(true, messageid);
+        });/*body delegate click*/
+    });/*document ready*/
+
+	
+    $(document).ready(function () {
+		<!-- show/hide thread/paper delete/rename button bar -->
+		$(".buttonBar").hide();
+
+		$("body").delegate(".navLi", {
+			mouseenter: function () {
+				if($(this).find(".buttonBar").hasClass("hidden")){
+					$(this).find(".buttonBar").removeClass("hidden");
+				}
+				$(this).find(".buttonBar").show();
+			},
+			mouseleave: function () {
+				$(this).find(".buttonBar").hide();
+			}
+		});
+    });
+
+
+	<!-- modal dialog for rename thread -->
+    /*rename button with modal dialog*/
+    $(document).ready(function () {
+        // transfer comment id to modal 
+        $("body").delegate("a.thread-rename", 'click', function (e) {
+            $('a#renameAction').attr("threadid", $(this).attr("threadid"));
+            $('#newName').val($(this).data("name"));
+            //alert($(this).attr("id"));
+        });
+
+        // perform modal "OK" action
+        $("body").delegate('a#renameAction', 'click', function (e) {
+            //e.preventDefault();
+            //alert('ok'); //triggered!
+            //alert($(this).attr("threadid"));
+            var threadid = $(this).attr("threadid");
+            if (threadid == null) {
+                return;
+            }
+            //alert($('#newName').val());
+            $.post("{{url_for('funnote.rename_thread')}}", {
+                threadid: threadid,
+                name: $('#newName').val()
+            }, function (data) {
+                if (data.status == true) {
+                    //alert($('#threadName_'+threadid).text());
+                    $('#threadName_' + threadid).text($('#newName').val());
+                }
+            });
+        });
+    });
+
+<!-- modal dialog for rename paper -->
+    /*rename button with modal dialog*/
+    $(document).ready(function () {
+        // transfer comment id to modal 
+        $("body").delegate("a.paper-rename", 'click', function (e) {
+            $('a#renameAction').attr("paperid", $(this).attr("paperid"));
+            $('#newName').val($(this).data("name"));
+            //alert($(this).attr("id"));
+        });
+
+        // perform modal "OK" action
+        $("body").delegate('a#renameAction', 'click', function (e) {
+            //e.preventDefault();
+            //alert('ok'); //triggered!
+            //alert($(this).attr("id"));
+            var paperid = $(this).attr("paperid");
+            if (paperid == null) {
+                return;
+            }
+            $.post("{{url_for('funnote.rename_paper')}}", {
+                paperid: paperid,
+                name: $('#newName').val()
+            }, function (data) {
+                if (data.status == true) {
+                    $('#paperName_' + paperid).text($('#newName').val());
+                }
+            });
+        });
+    });
+
+
+<!-- modal dialog for delete thread -->
+    /*delete button with modal dialog*/
+    $(document).ready(function () {
+        // transfer comment id to modal 
+        $("body").delegate("a.thread-delete", 'click', function (e) {
+            $('a#modalAction').attr("threadid", $(this).attr("threadid"));
+            $('div#myModal div.modal-body p').html($(this).data("confirm"));
+            //alert($(this).attr("id"));
+        });
+
+        // perform modal "OK" action
+        $("body").delegate('a#modalAction', 'click', function (e) {
+            //e.preventDefault();
+            //alert('ok'); //triggered!
+            //alert($(this).attr("id"));
+            var threadid = $(this).attr("threadid");
+            if (threadid == null) {
+                return;
+            }
+            $.post("{{url_for('funnote.delete_thread')}}", {
+                threadid: threadid
+            }, function (data) {
+                $('#noteFiltersThreadLi_' + threadid).fadeOut(1200, function (e) {
+                    $('#noteFiltersThreadLi_' + threadid).remove();
+                });
+                //window.location.href = data.redirect;
+            });
+        });
+    });
+
+
+	<!-- modal dialog for delete paper -->
+    /*delete button with modal dialog*/
+    $(document).ready(function () {
+        // transfer comment id to modal 
+        $("body").delegate("a.paper-delete", 'click', function (e) {
+            $('a#modalAction').attr("paperid", $(this).attr("paperid"));
+            $('div#myModal div.modal-body p').html($(this).data("confirm"));
+            //alert($(this).attr("id"));
+        });
+
+        // perform modal "OK" action
+        $("body").delegate('a#modalAction', 'click', function (e) {
+            //e.preventDefault();
+            //alert('ok'); //triggered!
+            //alert($(this).attr("id"));
+            var paperid = $(this).attr("paperid");
+            if ($.trim(paperid) == "") {
+                return;
+            }
+            $.post("{{url_for('funnote.delete_paper')}}", {
+                paperid: paperid
+            }, function (data) {
+                $('#noteFiltersPaperLi_' + paperid).fadeOut(1200, function (e) {
+                    $('#noteFiltersPaperLi_' + paperid).remove();
+                });
+                //window.location.href = data.redirect;
+            });
+        });
+    });
+
+	<!-- for add thread -->
+    /**/
+    $(document).ready(function () {
+        // transfer comment id to modal 
+        $("a#addNewThread").on('click', function (e) {
+            var name = $("#newThreadName").val();
+            $.post("{{url_for('funnote.add_thread')}}",
+            {
+                activethreadid: $(window).data('activethreadid'),
+                activepaperid: $(window).data('activepaperid'),
+                name: name 
+            },
+            function (data) {
+                if (data.status == true) {
+                    $("#threadList_ul").append(data.html);
+                    $("#threadList_ul").children().last().hide();
+                    $("#threadList_ul").children().last().fadeIn(1200);
+                }
+            });
+        });
+    });
+
+
+	<!-- for add paper -->
+    /**/
+    $(document).ready(function () {
+        // transfer comment id to modal 
+        $("a#addNewPaper").on('click', function (e) {
+            var name = $("#newPaperName").val();
+            $.post("{{url_for('funnote.add_paper')}}",
+            {
+                activethreadid: $(window).data('activethreadid'),
+                activepaperid: $(window).data('activepaperid'),
+                name: $("#newPaperName").val() 
+            },
+            function (data) {
+                if (data.status == true) {
+                    $("#paperList_ul").prepend(data.html);
+                    $("#paperList_ul").children().first().hide();
+                    $("#paperList_ul").children().first().fadeIn(1200);
+                }
+            });
+        });
+    });
+
+	<!-- share note -->
+    $(document).ready(function () {
+        $("body").delegate('.switch-share-note', 'click', function (e) {
+            var noteid = $(this).attr("id").substring(6);
+            var shared = !($(this).attr("shared") === "true");
+            var $button = $(this);
+            //alert(shared);
+            $.post("{{url_for('funnote.share_note_switch')}}",
+                { id: noteid, shared: shared },
+                function (data) {
+                    //alert($button.attr("id"));
+                    if (shared == true) {
+                        $button.text("{{_('shared')}}");
+                    }
+                    else {
+                        $button.text("{{_('share it!')}}");
+                    }
+                    $button.attr("shared", shared);
+                }
+                );
+        });
+    });
+
+	<!-- modal dialog for delete note -->
+    /*delete button with modal dialog*/
+    $(document).ready(function () {
+        // perform modal "OK" action
+        $("body").delegate('a#modalAction', 'click', function (e) {
+            //e.preventDefault();
+            //alert('ok'); //triggered!
+            //alert($(this).attr("id"));
+            var self = this; //
+            if ($(self).attr("messageid") != null) {//delete message
+                var messageid = $(self).attr("messageid");
+				
+                $.post("{{url_for('funnote.delete_message')}}", {
+                    activethreadid: $(window).data('activethreadid'),
+                    activepaperid: $(window).data('activepaperid'),
+                    messageid: messageid
+                }, function (data) {
+                    //window.location.href = data.redirect;
+                    $('#noteItem_' + messageid).fadeOut(1200, function (e) {
+				
+						if($(window).data('inPlaceEditingID')==messageid){
+							//alert('here');
+							kickInPlaceEdit(false);
+						}
+						
+                        $('#noteItem_' + messageid).remove();
+                    });
+                });
+            }
+        });
+    });
+
+
+
+	<!-- lazy load and filters notes -->
+    var noteListMore = function (clear, threadid, paperid, tags, 
+        sort, direction, criteria,
+        doMoreOnFinish) {
+        if ($(window).data('ajaxready') == false) return;
+
+        var lastIds = $('#noteList').children().last().data("messageid") || "";
+        if (clear)
+            lastIds = "";
+
+        loadMoreNotes({
+            container: $('#noteList'),
+            scroller: $(window),
+            loader: $('div#lazyLoaderDiv'),
+            authorid: '{{current_user.id}}',
+            clear: clear,
+            lastIds: lastIds,
+            tips: '{{_("Loading more notes...")}}',
+            nomoreTips: '{{_("No more notes.")}}',
+            threadid: threadid,
+            paperid: paperid,
+            sort: sort,
+            direction: direction,
+            criteria: criteria,
+            onstart: function () {
+                $(window).data('ajaxready', false);
+            },
+            onfinish: function (data) {
+				//alert('come:loadMoreNotes onfinish');
+                $(window).data('ajaxready', true);
+                doMoreOnFinish(data);
+            }
+        });
+    };
+
+    $(document).ready(function () {
+
+        //$('input#hostName').focus();
+        $(window).data('activethreadid', '');
+        $(window).data('activepaperid', '');
+        $(window).data('sort', 'date-modified');
+        $(window).data('direction', 'descending');
+        $(window).data('criteria', '');
+
+        // filters
+        $('.filters-sort').on('click', function () {
+            var self = this;
+            $(window).data('sort', $(self).data('sort'));
+            $('.filters-sort').removeClass("active");
+            $(self).addClass("active");
+            $('#ul-filters-sort').text($(self).text()); //don't use .html()
+            $('#ul-filters-sort').append("<b class='caret'></b>");
+        });
+        $('.filters-sort-direction').on('click', function () {
+            var self = this;
+            $(window).data('direction', $(self).data('direction'));
+            $('.filters-sort-direction').removeClass("active");
+            $(self).addClass("active");
+            $('#ul-filters-sort-direction').text($(self).text()); //don't use .html()
+            $('#ul-filters-sort-direction').append("<b class='caret'></b>");
+        });
+
+        $('#apply_filters').on('click', function () {
+            var self = this;
+            noteListMore(true, $(window).data('activethreadid'),
+                $(window).data('activepaperid'), '',
+                $(window).data('sort'), $(window).data('direction'),
+                $.trim($('#filterSearchCriteria').val()),
+                function (data) {
+                    if($(window).data('sort')=='order_in_paper' 
+                        && $(window).data('direction')=='ascending'){
+                        //$('#noteList').addClass('sortable');
+                        $('#enableDragDrop').text("{{_('dragable')}}");
+                        $( "#noteList" ).sortable({
+                            axis: 'y',
+                            disabled:false,
+                            placeholder: "ui-state-highlight",
+                            forcePlaceholderSize: true,
+                            start: function (event, ui) {
+                                var start_pos = ui.item.index();
+                                //alert(start_pos);
+                                ui.item.data('start_pos', start_pos);
+                            },
+                            stop: function (event, ui) {
+                                var stop_pos = ui.item.index();
+                                var start_pos = ui.item.data('start_pos');
+                                //alert(stop_pos);
+                                if (stop_pos != start_pos) {
+                                    $.post("{{url_for('funnote.change_order')}}",
+                                        { 
+                                            id:$(window).data('activepaperid'),
+                                            start_pos: start_pos+1, stop_pos: stop_pos+1 
+                                        },
+                                        function (data) {
+                                            //alert(data.result);
+                                        });
+                                }
+                            }
+                            });
+	                	$( "#noteList" ).disableSelection();
+                    }else{
+                        //$('#noteList').reomveClass('sortable');
+                        $('#enableDragDrop').text("{{_('not dragable')}}");
+                        $( "#noteList" ).sortable({disabled:true});
+	                	$( "#noteList" ).enableSelection();
+                   }
+                });
+        });
+
+        $('#clear_filters').on('click', function () {
+            var self = this;
+            $('#filterSearchCriteria').val('');
+        });
+
+        /*load more notes when scroll down to the bottom*/
+        $(window).data('ajaxready', true).scroll(function (e) {
+            //alert('scroll');
+            //alert($(window).scrollTop()); //当前滚动之后上方被隐藏的内容的高度：100, 200, 300, ...
+            //alert($(document).height());  //文档的内部高度，内容越多越高：4739
+            //alert($(window).height());    //浏览器客户端窗口（可见窗口）的高度，280
+            if ($(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
+                var paperid = $(window).data('activepaperid');
+                noteListMore(false, $(window).data('activethreadid'),
+                paperid, '',
+                $(window).data('sort'), $(window).data('direction'),
+                '',
+                function () {
+                });
+            }
+        });
+
+        /*load notes when the document is initially load*/
+        noteListMore(true, $(window).data('activethreadid'),
+        $(window).data('activepaperid'), '',
+        $(window).data('sort'), $(window).data('direction'),
+        '',
+        function () {
+            $('#noteFiltersAll').parent().addClass("active");
+            $('#noteFiltersAll').parent().siblings().removeClass("active");
+            $('.paper-specific').addClass("hide");
+        });
+
+
+        $('#noteFiltersAll').on('click', function (e) {
+            var self = this;
+            if ($(self).parent().hasClass("active"))
+                return;
+            noteListMore(true, '', '', '',
+            $(window).data('sort'), $(window).data('direction'),
+            '',
+            function () {
+                $('.navLi').removeClass("active");
+                $(self).parent().addClass("active");
+                $('#filtersActiveThreadLabel').empty();
+                $(window).data('activethreadid', '');
+                $(window).data('activepaperid', '');
+                $('.paper-specific').addClass("hide");
+            });
+        });
+
+        $("body").delegate('.note-filters-thread', 'click', function (e) {
+            var self = this;
+            if ($(self).parent().hasClass("active"))
+                return;
+            var threadid = $(self).attr("threadid");
+            noteListMore(true, threadid, '', '',
+            $(window).data('sort'), $(window).data('direction'),
+            '',
+            function () {
+                $(window).data('activethreadid', threadid);
+                $(window).data('activepaperid', '');
+                $('.navLi').removeClass("active");
+                $(self).parent().addClass("active");
+                $('.paper-specific').addClass("hide");
+            });
+        });
+
+        $("body").delegate('.note-filters-paper', 'click', function (e) {
+            var self = this;
+            if ($(self).parent().hasClass("active"))
+                return;
+            var paperid = $(self).attr("paperid");
+            //$(window).data('sort', "order_in_paper");
+            //$(window).data('direction', "ascending");
+            noteListMore(true, '', paperid, '',
+            $(window).data('sort'), $(window).data('direction'),
+            '',
+            function (data) {
+                $('.navLi').removeClass("active");
+                $(self).parent().addClass("active");
+                $(window).data('activepaperid', paperid);
+                $(window).data('activethreadid', '');
+                $('.paper-specific').removeClass("hide");
+				
+				/*share button and enable drag button*/
+				if(data.shared==true){
+					//alert('true');
+					$('#sharePaper').addClass("active");
+					$('#sharePaper').text('{{_("shared")}}');
+					$('#sharePaper').attr('shared', 'true');
+					$('#sharePaper').attr('paperid', paperid);
+				}else{
+					//alert('false');
+					$('#sharePaper').removeClass("active");
+					$('#sharePaper').text('{{_("share it!")}}');
+					$('#sharePaper').attr('shared', 'false');
+					$('#sharePaper').attr('paperid', paperid);
+				}
+            });
+        });
+    });
+</script>
+
+
+<!-- share paper -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.switch-share-paper').on('click', function (e) {
+            var paperid = $(this).attr("paperid");
+            var shared = !($(this).attr("shared") === "true");
+            var $button = $(this);
+            //alert(shared);
+            $.post("{{url_for('funnote.share_paper_switch')}}",
+                { id: paperid, shared: shared },
+                function (data) {
+                    //alert($button.attr("id"));
+                    if (shared == true) {
+                        $button.text("{{_('shared')}}");
+                    }
+                    else {
+                        $button.text("{{_('share it!')}}");
+                    }
+                    $button.attr("shared", shared);
+                }
+                );
+        });
+    });
+</script>
+
+<!-- note collapse/expand -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var converter1 = Markdown.getSanitizingConverter();
+
+        $("body").delegate(".note-stop-propagation", 'click', function (e) {
+            //alert('d');
+            e.preventDefault();
+            e.stopPropagation();
+        });
+        $("body").delegate(".collapsable", 'click', function (e) {
+            //alert('f');
+            var self = this;
+            if ($(self).data("state") == "collapsed") {
+                var oldBrief = $(self).children(".hide-on-expanded").text();
+                $(self).children(".hide-on-expanded").html('<h3><small>{{_("Loading content...")}}</small><img src="/static/ui-anim_basic_16x16.gif"></h3>');
+                //read data and display it
+                $.ajax({
+                    type: 'get',
+                    url: '{{url_for("funnote.get_original")}}',
+                    data: { noteid: $(self).data('messageid') },
+                    success: function (data) {
+                //expand it!
+                        $(self).children(".note-markdown-div").attr('original', data.content);
+                        $(self).children(".note-markdown-div").html(converter1.makeHtml(data.content));
+                $(self).children(".hide-on-expanded").addClass("hide");
+                        $(self).children(".hide-on-expanded").text(oldBrief);
+                $(self).children(".show-on-expanded").removeClass("hide");
+                $(self).data("state", "expanded");
+                    },
+                    error: function(){
+                        $(self).children(".hide-on-expanded").text(oldBrief);
+                    }
+                });
+            } else {
+                //collapse it!
+                kickInPlaceEdit(true, '', function () {
+                    var original = $("div#note_" + $(self).data("messageid")).attr('original');
+                    $("div#brief_note_" + $(self).data("messageid")).text(original.substring(0, 100));
+                    $(self).children(".show-on-expanded").addClass("hide");
+                    $(self).children(".note-markdown-div").html('');
+                    $(self).children(".note-markdown-div").attr('original', '');
+                    $(self).children(".hide-on-expanded").removeClass("hide");
+                    $(self).data("state", "collapsed");
+                }, function () {
+                });
+            }
+        });
+//        $("body").delegate(".note-markdown-div", 'click', function (e) {
+//            var self = this;
+//            var noteid = $(self).attr("id").substring(5);
+//            kickInPlaceEdit(true, noteid);
+//        });
+    });
+</script>
+
+<!-- CTRL+S capture -->
+<script type="text/javascript">
+    $.ctrl = function (key, callback, args) {
+        var isCtrl = false;
+        $('#wmd-input').keydown(function (e) {
+            if (!args) args = []; // IE barks when args is null
+
+            if (e.ctrlKey) isCtrl = true;
+            if (e.keyCode == key.charCodeAt(0) && isCtrl) {
+                isCtrl = false;
+                callback.apply(this, args);
+                return false;
+            }
+        }).keyup(function (e) {
+            if (e.ctrlKey) isCtrl = false;
+        });
+    };
+
+    $.ctrl('S', function () {
+        kickInPlaceEdit(true, $(window).data('inPlaceEditingID'));
+    });
+</script>
+
+</body>

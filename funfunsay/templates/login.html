@@ -1,0 +1,136 @@
+﻿{% from "macros/_misc.html" import render_input, render_action %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{_("Sign In")}} | {{_("Notebook on the Cloud")}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-responsive.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+    </style>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="{{ url_for('homesite.home') }}">云笔记本</a>
+
+    <!--user login control-->
+        {% if current_user.is_authenticated() %}
+          <div class="btn-group pull-right">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="icon-user"></i> {{ current_user.name }}
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('homesite.user_profile') }}">{{_("User Profile")}}</a></li>
+              <li class="divider"></li>
+              <li><a href="{{ url_for('homesite.logout') }}">{{_("Sign Out")}}</a></li>
+            </ul>
+          </div>
+        {% elif login_form is defined %}
+        <ul class="pull-right">
+            <li class="login sina"><a title="{{_('Login use Sina Weibo')}}" href="/connect/sina">{{_("Sina Weibo")}}</a></li>
+        </ul>
+        <ul class="pull-right">
+            <li><a class="btn" title="{{_('Sign Up')}}" href="{{ url_for('homesite.register') }}">{{_("Sign Up")}}</a></li>
+        </ul>
+        <form class='navbar-form pull-right' method='POST' action="{{ url_for('homesite.login') }}">
+            {{ login_form.hidden_tag() }}
+            {{ login_form.next }}
+            {{ login_form.login(class_='input-small', placeholder=_("Username")) }}
+            {{ login_form.password(class_='input-small', placeholder=_("Password")) }}
+            <button type="submit" class="btn btn-primary btn-small">{{_("Log in")}}</button>
+        </form>
+        {% endif %}
+        <!--/user login control-->
+         <div class="nav-collapse">
+            <ul class="nav">
+              <li><a href="#about">{{_("About")}}</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+    <form class='form-stacked' method="POST" action="{{ url_for('homesite.login') }}">
+        {{ form.hidden_tag() }}
+        {{ form.next }}
+        <fieldset>
+            <legend>{{_("Not a member?")}} <a href="{{ url_for('homesite.register') }}">{{_("Sign up")}}</a> {{_("please.")}}</legend>
+            {{ render_input(form.login, 'input-xlarge') }}
+            {{ render_input(form.password, 'input-xlarge') }}
+            <div class='clearfix'>
+                <label></label>
+                <div class="input">
+                    {{ form.remember() }}<span class='remember_me'>{{ _('Remember me') }}</span>
+                </div>
+            </div>
+            {{ render_action(form.submit) }}
+        </fieldset>
+    </form>
+        </div><!--/span-->
+        <div class="span9">
+        </div><!--/span-->
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+        <h5><small>&copy; 2011 ECNU</small>
+        </h5>
+            <h4><small>{{_("Notebook on the Cloud")}}</small></h4>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-transition.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-alert.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-modal.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-dropdown.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-scrollspy.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-tab.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-tooltip.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-popover.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-button.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-collapse.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-carousel.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-typeahead.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/application.js') }}"></script>
+  </body>
+</html>
+

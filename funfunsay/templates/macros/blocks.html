@@ -1,0 +1,23 @@
+﻿{% macro connect_info_block(provider) -%}
+<!-- 个人信息框 -->
+<div class="">
+        <div class="">
+            <span><a href="#"><img src="{{provider.profile_image_url}}" target="_blank" alt="{{provider.screen_name}}" /></a>
+            <label>{{provider.screen_name}}&nbsp;<span class="from oauth sina"><a title="{{_('Visit')}}" href="#">{{_("Visit")}}</a></span>&nbsp;{{_("Expires in:")}}<strong>{{ provider.expires_in|datetimeformat}}</strong>
+                <a class='sync-sina-provider' data-userid_provider="{{_('provider.id')}}" title="{{_('Sync')}}" href="/connect/sina">{{_("Sync")}}</a>&nbsp;
+                <a class='unlink-sina-provider' data-userid_provider="{{_('provider.id')}}" title="{{_('Unlink')}}" href='/_unlink_provider?provider=open.weibo.com&user_id_provider={{provider.id}}'>{{_("Unlink")}}</a>
+            </label>
+            </span>
+        </div>
+</div>
+<!-- End 个人信息框 -->
+{%- endmacro %}
+
+{% macro connect_block() -%}
+    <ul>
+        <li class="login qq"><a title="使用腾讯微博授权登录" href="/connect/qq">qq</a></li>
+        <li class="login sina"><a title="使用新浪微博授权登录" href="/connect/sina">sina</a></li>
+        <li class="login douban"><a title="使用豆瓣授权登录" href="/connect/douban">douban</a></li>
+        <li class="login twitter"><a title="使用 Twitter 授权登录" href="/connect/twitter">twitter</a></li>
+    </ul>
+{%- endmacro %}

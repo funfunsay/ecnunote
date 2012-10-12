@@ -1,0 +1,245 @@
+{% from "macros/_misc.html" import render_note, render_shared_note %}
+{% if shared_view==True %}
+{% for note in notes %}
+{{render_shared_note(note, current_user)}}
+{% endfor %}
+{% else %}
+{% for note in notes %}
+{{render_note(note, expanded)}}
+{% endfor %}
+{% endif %}
+<!-- NOTE: MUST not add any html elements in this file
+    any more!!!
+!!! -->
+
+{% if loadScript==True %}
+<!-- enable note delete -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        // transfer comment id to modal 
+        $("body").delegate("a.note-delete", 'click', function (e) {
+            //alert($(this).attr("messageid"));
+            $('a#modalAction').attr("messageid", $(this).attr("messageid"));
+            $('div#myModal div.modal-body p').html($(this).data("confirm"));
+            //alert($(this).attr("id"));
+        });
+    });
+</script>
+
+<!-- share note -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("body").delegate('.switch-share-note', 'click', function (e) {
+            var noteid = $(this).attr("id").substring(6);
+            var shared = !($(this).attr("shared") === "true");
+            var $button = $(this);
+            //alert(shared);
+            $.post("{{url_for('funnote.share_note_switch')}}",
+                { id: noteid, shared: shared },
+                function (data) {
+                    //alert($button.attr("id"));
+                    if (shared == true) {
+                        $button.text("{{_('shared')}}");
+                    }
+                    else {
+                        $button.text("{{_('share it!')}}");
+                    }
+                    $button.attr("shared", shared);
+                }
+                );
+        });
+    });
+</script>
+
+<!-- show/hide note buttons -->
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("body").delegate("div.noteItem", {
+            mouseenter: function () {
+                if ($(this).find(".note-item-auto-hidden-button").hasClass("hidden")) {
+                    $(this).find(".note-item-auto-hidden-button").removeClass("hidden");
+                }
+                $(this).find(".note-item-auto-hidden-button").show();
+            },
+            mouseleave: function () {
+                $(this).find(".note-item-auto-hidden-button").hide();
+            } 
+        }
+            );
+    });
+
+</script>
+
+<!-- select threads button with modal dialog -->
+<script type="text/javascript">
+    /*select threads button with modal dialog*/
+
+    $(document).ready(function () {
+
+        // transfer note id to modal 
+        $("body").delegate("button.select-threads", 'click', function (e) {
+            $('#modalThreadsStatus').empty();
+            //alert($(this).attr("id"));
+            var messageid = $(this).attr("id").substring(11);
+            $('#modalThreadsAjaxContainer').html('<h3><small>{{_("Loading list of threads...")}}</small><img src="/static/ui-anim_basic_16x16.gif"></h3>');
+            $.ajax({
+                type: 'get',
+                url: "{{url_for('funnote.modal_threads')}}",
+                data: {
+                    messageid: messageid
+                },
+                success: function (data) {
+                    $('#modalThreadsAjaxContainer').html(data.html);
+                    $('#Action1').attr("messageid", messageid);
+                },
+                error: function () {
+                    $('#modalThreadsAjaxContainer').html('<h3><small>{{_("Loading list of threads...")}}</small><small>{{_("Failed!")}}</small></h3>');
+                }
+            });
+
+            //
+        });
+
+        // perform modal "OK" action
+        $('body').delegate("a.update-threads", 'click', function (e) {
+            //alert('ok2'); //triggered!
+            var threads = new Array();
+            var messageid = $(this).attr("messageid");
+            //alert('messageid:' + messageid);
+            var count = 0;
+
+            $('input.checkbox-thread').each(function (index) {
+                //alert(index + ': ' + $(this).is(':checked'));
+                if ($(this).is(':checked')) {
+                    //alert(index + ': ' + $(this).attr('id'));
+                    threads[count] = $(this).attr('id').substring(12);
+                    //alert(count + ': ' + threads[count]);
+                    ++count;
+                }
+            });
+            $('#modalThreadsStatus').html('<h3><small>{{_("Saving...")}}</small><img src="/static/ui-anim_basic_16x16.gif"></h3>');
+
+            $.ajax({
+                type: 'post',
+                url: "{{url_for('funnote.set_threads')}}",
+                data: {
+                    activepaperid: $(window).data('activepaperid'),
+                    activethreadid: $(window).data('activethreadid'),
+                    messageid: messageid,
+                    threads: threads.join("&")
+                },
+                success: function (data) {
+                    $('#modalThreads').modal('hide');
+                    $('#modalThreadsAjaxContainer').empty();
+                    $('#modalThreadsStatus').empty();
+                    //alert(data.belongto);
+                    // remove html item if current note doesn't belong to this paper any more
+                    if (data.belongto == false) {
+                        $('#noteItem_' + messageid).fadeOut(1200, function (e) {
+                            $('#noteItem_' + messageid).remove();
+                        });
+                    }
+                },
+                error: function () {
+                    $('#modalThreadsStatus').html('<h3><small>{{_("Saving...")}}</small><small>{{_("Failed!")}}</small></h3>');
+                }
+            });
+            //alert('messageid:' + messageid);
+        });
+    });
+</script>
+
+<!-- select papers button with modal dialog -->
+<script type="text/javascript">
+    /*select papers button with modal dialog*/
+
+    $(document).ready(function () {
+
+        // transfer note id to modal 
+        $("body").delegate("button.select-papers", 'click', function (e) {
+            $('#modalPapersStatus').empty();
+            //alert($(this).attr("id"));
+            var messageid = $(this).attr("id").substring(10);
+            $('#modalPapersAjaxContainer').html('<h3><small>{{_("Loading list of papers...")}}</small><img src="/static/ui-anim_basic_16x16.gif"></h3>');
+
+            $.ajax({
+                type: 'get',
+                url: "{{url_for('funnote.modal_papers')}}",
+                data: {
+                    messageid: messageid
+                },
+                success: function (data) {
+                    $('#modalPapersAjaxContainer').html(data.html);
+                    $('#Action2').attr("messageid", messageid);
+                },
+                error: function () {
+                    $('#modalPapersAjaxContainer').html('<h3><small>{{_("Loading list of papers...")}}</small><small>{{_("Failed!")}}</small></h3>');
+                }
+            });
+
+            //
+        });
+
+        // perform modal "OK" action
+        $('body').delegate('a.update-papers', 'click', function (e) {
+            //alert('ok2'); //triggered!
+            var papers = new Array();
+            var messageid = $(this).attr("messageid");
+            //alert('messageid:' + messageid);
+            var count = 0;
+
+            $('input.checkbox-paper').each(function (index) {
+                //alert(index + ': ' + $(this).is(':checked'));
+                if ($(this).is(':checked')) {
+                    //alert(index + ': ' + $(this).attr('id'));
+                    papers[count] = $(this).attr('id').substring(11);
+                    //alert(count + ': ' + papers[count]);
+                    ++count;
+                }
+            });
+            $('#modalPapersStatus').html('<h3><small>{{_("Saving...")}}</small><img src="/static/ui-anim_basic_16x16.gif"></h3>');
+            $.ajax({
+                type: 'post',
+                url: "{{url_for('funnote.set_papers')}}",
+                data: {
+                    activepaperid: $(window).data('activepaperid'),
+                    activethreadid: $(window).data('activethreadid'),
+                    messageid: messageid,
+                    papers: papers.join("&")
+                },
+                success: function (data) {
+                    $('#modalPapers').modal('hide');
+                    $('#modalPapersAjaxContainer').empty();
+                    $('#modalPapersStatus').empty();
+                    //alert(data.belongto);
+                    // remove html item if current note doesn't belong to this paper any more
+                    if (data.belongto == false) {
+                        $('#noteItem_' + messageid).fadeOut(1200, function (e) {
+                            $('#noteItem_' + messageid).remove();
+                        });
+                    }
+                },
+                error: function () {
+                    $('#modalPapersStatus').html('<h3><small>{{_("Saving...")}}</small><small>{{_("Failed!")}}</small></h3>');
+                }
+            });
+            //alert('messageid:' + messageid);
+        });
+    });
+</script>
+
+<!-- force redirect 
+ @faq: why href won't redirect by itself?
+-->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("body").delegate(".force-redirect", 'click', function (e) {
+            var self = this;
+            //alert('rd');
+            window.location.href = $(self).attr("redirect");
+        });
+    });
+</script>
+
+{% endif %}

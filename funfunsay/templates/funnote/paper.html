@@ -1,0 +1,401 @@
+{% from "macros/_misc.html" import render_pagination, render_notelistitem, render_deletemodal %}
+{% extends 'funnote/_layout.html' %} 
+{% block title %} 
+{{_("Paper")}} 
+{% endblock %}
+
+
+{% block Contentbar %}
+<div class="">
+    <div class="row">
+        <button id="sharePaper_{{paper.id}}" shared="{{'true' if paper.shared==True else 'false'}}" 
+            class="btn btn-primary pull-right {{'active' if paper.shared==True}} switch-share-paper"
+            data-toggle="button">
+            {{_("shared") if paper.shared==True else _("share it!")}}
+        </button>
+    </div>
+    <div class="">
+        <h3>{{paper.name}}</h3>
+    </div>
+</div>
+<div class="accordion" id="accordion2">
+    <ul class="sortable">
+    {% for note in notes %}
+    <li class="">
+    <!--{{ render_notelistitem(note, "#accordion2") }}
+-->
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <div class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" data-target="#collapse_{{note.id}}">
+                {{note.source|markdown}}
+            </div>
+        </div>
+        <div id="collapse_{{note.id}}" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <div class="noteItem" data-toggle="collapse" data-parent="#accordion2">
+                    <div class="row">
+                        <a class="pull-right"><i class="icon-star-empty pull-right"></i></a>
+                        <button id="share_{{note.id}}" shared="{{'true' if note.shared==True else 'false'}}" 
+                            class="btn btn-primary pull-right {{'active' if note.shared==True}} switch-share-note"
+                            data-toggle="button">
+                            {{_("shared") if note.shared==True else _("share it!")}}</button>
+                    </div>
+                    <div class="noteItemValue" id="note_{{note.id}}" original="{{note.source}}">
+                            {{note.source|markdown}}
+                    </div>
+                    <div class="row">
+                        <button class="note-organize pull-right">
+                            {{_("organize")}}</button>
+                        <button class="select-threads pull-right" id="selThreads_{{note.id}}"
+                            data-target="#modalThreads" data-toggle="modal">
+                            {{_("threads")}}</button>
+                        <button class="select-papers pull-right" id="selPapers_{{note.id}}"
+                            data-target="#modalPapers" data-toggle="modal">
+                            {{_("papers")}}</button>
+                        <button class="note-attach-file pull-right">
+                            {{_("attach file")}}</button>
+                        <a class="note-edit pull-right" title="{{_('Edit')}}"
+                            href="#modalPageDownEditor" data-toggle="modal" id="editnote_{{note.id}}"><span>&nbsp;</span>{{_("Edit")}}<span>&nbsp;</span></a>
+                        <a class="note-delete pull-right" data-confirm="{{_('Delete this note?')}}" title="{{_('Delete')}}"
+                            href="#myModal" data-toggle="modal" messageid="{{note.id}}"><span>&nbsp;</span>{{_("Delete")}}<span>&nbsp;</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <p class="help-block pull-right">
+                <small>{{_("Modified:")}}</small><strong id="modified_{{note.id}}">{{ note.modified_date|datetimeformat}}</strong>
+                <a class="" href="{{url_for('funnote.message_page', messageid=note.id)}}">{{_("Comments")}}</a>
+            </p>
+        </div>
+    </div>
+    </li>
+    {% endfor %} 
+    </ul>
+</div>
+
+
+<div class="modal hide" id="myModal">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">&times;</button>
+    <h3>{{_("Confirm delete")}}</h3>
+  </div>
+  <div class="modal-body">
+    <p>{{_("Delete this note?")}}</p>
+  </div>
+  <div class="modal-footer">
+    <a id="modalAction" data-dismiss="modal" href="#" class="btn btn-primary">{{_("OK")}}</a>
+    <a href="#" data-dismiss="modal" class="btn">{{_("Cancel")}}</a>
+  </div>
+</div>
+
+<div class="modal hide" id="modalThreads">
+  <div id="modalThreadsAjaxContainer">
+  </div>
+  <div class="modal-footer">
+    <a id="Action1" data-dismiss="modal" href="#" class="update-threads btn btn-primary">{{_("OK")}}</a>
+    <a href="#" data-dismiss="modal" class="btn">{{_("Cancel")}}</a>
+  </div>
+</div>
+<!--modalThreads -->
+
+<div class="modal hide" id="modalPapers">
+  <div id="modalPapersAjaxContainer">
+  </div>
+  <div class="modal-footer">
+    <a id="Action2" data-dismiss="modal" href="#" messageid="" class="update-papers btn btn-primary">{{_("OK")}}</a>
+    <a href="#" data-dismiss="modal" class="btn">{{_("Cancel")}}</a>
+  </div>
+</div>
+<!--modalPapers -->
+
+{% endblock %} <!--block Contentbar-->
+
+
+
+
+{% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui-1.8.18.custom.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.jeditable.js') }}"></script>
+
+<!-- share note -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.switch-share-note').on('click', function (e) {
+            var noteid = $(this).attr("id").substring(6);
+            var shared = !($(this).attr("shared") === "true");
+            var $button = $(this);
+            //alert(shared);
+            $.post("{{url_for('funnote.share_note_switch')}}",
+                { id: noteid, shared: shared },
+                function (data) {
+                    //alert($button.attr("id"));
+                    if (shared == true) {
+                        $button.text("{{_('shared')}}");
+                    }
+                    else {
+                        $button.text("{{_('share it!')}}");
+                    }
+                    $button.attr("shared", shared);
+                }
+                );
+        });
+    });
+</script>
+
+<!-- share paper -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.switch-share-paper').on('click', function (e) {
+            var paperid = $(this).attr("id").substring(11);
+            var shared = !($(this).attr("shared") === "true");
+            var $button = $(this);
+            //alert(shared);
+            $.post("{{url_for('funnote.share_paper_switch')}}",
+                { id: paperid, shared: shared },
+                function (data) {
+                    //alert($button.attr("id"));
+                    if (shared == true) {
+                        $button.text("{{_('shared')}}");
+                    }
+                    else {
+                        $button.text("{{_('share it!')}}");
+                    }
+                    $button.attr("shared", shared);
+                }
+                );
+        });
+    });
+</script>
+
+<!-- modal dialog for delete note -->
+<script type="text/javascript">
+    /*select threads with modal dialog*/
+    $(document).ready(function () {
+        $("a.note-delete").on('click', function (e) {
+            $('a#modalAction').attr("messageid", $(this).attr("messageid"));
+            $('div#myModal div.modal-body p').html($(this).data("confirm"));
+            //alert($(this).attr("id"));
+        });
+    });
+
+    /*delete button with modal dialog*/
+    $(document).ready(function () {
+        $("a.note-delete").hide();
+
+        $("div.noteItem").hover(
+            function () { $(this).find("a.note-delete").show(); },
+            function () { $(this).find("a.note-delete").hide(); }
+        );
+
+        // transfer comment id to modal 
+        $("a.note-delete").on('click', function (e) {
+            $('a#modalAction').attr("messageid", $(this).attr("messageid"));
+            $('div#myModal div.modal-body p').html($(this).data("confirm"));
+            //alert($(this).attr("id"));
+        });
+
+        // perform modal "OK" action
+        $('a#modalAction').on('click', function (e) {
+            //e.preventDefault();
+            //alert('ok'); //triggered!
+            //alert($(this).attr("id"));
+            if ($(this).attr("messageid") != null) {//delete message
+                var messageid = $(this).attr("messageid");
+                $.post("{{url_for('funnote.delete_message', activethreadid=activethreadid, activepaperid=activepaperid)}}", {
+                    messageid: messageid
+                }, function (data) {
+                    window.location.href = data.redirect;
+                });
+            }
+        });
+    });
+</script>
+
+<!-- select threads button with modal dialog -->
+<script type="text/javascript">
+    /*select papers button with modal dialog*/
+
+    $(document).ready(function () {
+
+        // transfer note id to modal 
+        $("button.select-threads").on('click', function (e) {
+            //alert($(this).attr("id"));
+            var messageid = $(this).attr("id").substring(11);
+
+            $.get("{{url_for('funnote.modal_threads')}}", {
+                messageid: messageid
+            }, function (data) {
+                $('#modalThreadsAjaxContainer').html(data.html);
+                $('#Action1').attr("messageid", messageid);
+            });
+
+            //
+        });
+
+        // perform modal "OK" action
+        $('a.update-threads').on('click', function (e) {
+            //alert('ok2'); //triggered!
+            var threads = new Array();
+            var messageid = $(this).attr("messageid");
+            //alert('messageid:' + messageid);
+            var count = 0;
+
+            $('input.checkbox-thread').each(function (index) {
+                //alert(index + ': ' + $(this).is(':checked'));
+                if ($(this).is(':checked')) {
+                    //alert(index + ': ' + $(this).attr('id'));
+                    threads[count] = $(this).attr('id').substring(12);
+                    //alert(count + ': ' + threads[count]);
+                    ++count;
+                }
+            });
+            $.post("{{url_for('funnote.set_threads', activepaperid=activepaperid, activethreadid=activethreadid)}}", {
+                messageid: messageid,
+                threads: threads.join("&")
+            }, function (data) {
+                if (data.redirect != null) {
+                    // if remove this note from current active thread
+                    // should update page
+                    window.location.href = data.redirect;
+                }
+            });
+            //alert('messageid:' + messageid);
+        });
+    });
+</script>
+
+<!-- select papers button with modal dialog -->
+<script type="text/javascript">
+    /*select papers button with modal dialog*/
+
+    $(document).ready(function () {
+
+        // transfer note id to modal 
+        $("button.select-papers").on('click', function (e) {
+            //alert($(this).attr("id"));
+            var messageid = $(this).attr("id").substring(10);
+
+            $.get("{{url_for('funnote.modal_papers')}}", {
+                messageid: messageid
+            }, function (data) {
+                $('#modalPapersAjaxContainer').html(data.html);
+                $('#Action2').attr("messageid", messageid);
+            });
+
+            //
+        });
+
+        // perform modal "OK" action
+        $('a.update-papers').on('click', function (e) {
+            //alert('ok2'); //triggered!
+            var papers = new Array();
+            var messageid = $(this).attr("messageid");
+            //alert('messageid:' + messageid);
+            var count = 0;
+
+            $('input.checkbox-paper').each(function (index) {
+                //alert(index + ': ' + $(this).is(':checked'));
+                if ($(this).is(':checked')) {
+                    //alert(index + ': ' + $(this).attr('id'));
+                    papers[count] = $(this).attr('id').substring(11);
+                    //alert(count + ': ' + papers[count]);
+                    ++count;
+                }
+            });
+            $.post("{{url_for('funnote.set_papers', activepaperid=activepaperid, activethreadid=activethreadid)}}", {
+                messageid: messageid,
+                papers: papers.join("&")
+            }, function (data) {
+                if (data.redirect != null) {
+                    // if remove this note from current active paper
+                    // should update page
+                    window.location.href = data.redirect;
+                }
+            });
+            //alert('messageid:' + messageid);
+        });
+    });
+</script>
+
+<!-- note collapse -->
+<script type="text/javascript">
+    $('.collapse').on('hidden', function () {
+        // do something...
+        var messageid = $(this).attr("id").substring(9);
+        $(this).prev().children(".accordion-toggle").html( $.trim($("div#note_" + messageid).html()) );
+        //alert($("div#note_" + messageid).text());
+        //alert($(this).children(".accordion-inner").children(".noteItem").children(".noteItemValue").children(".text_area").text());
+        //alert($(this).prev().children(".accordion-toggle").val());
+    })
+    $('.collapse').on('show', function () {
+        $(this).prev().children(".accordion-toggle").html("");
+    })
+</script>
+
+<!-- sort notes -->
+<script type="text/javascript">
+    $(function () {
+        $(".sortable").sortable({
+            axis: 'y'
+        });
+        $(".sortable").disableSelection();
+        $(".sortable").sortable({
+            start: function (event, ui) {
+                var start_pos = ui.item.index();
+                //alert(start_pos);
+                ui.item.data('start_pos', start_pos);
+            },
+            stop: function (event, ui) {
+                var stop_pos = ui.item.index();
+                var start_pos = ui.item.data('start_pos');
+                //alert(stop_pos);
+                if (stop_pos != start_pos) {
+                    $.post("{{url_for('funnote.change_order', id=activepaperid)}}",
+                        { start_pos: start_pos+1, stop_pos: stop_pos+1 },
+                        function (data) {
+                            //alert(data.result);
+                        });
+                }
+            }
+        });
+    });
+</script>
+
+
+<!-- Prepare for edit note -->
+<script type="text/javascript">
+    $('.note-edit').on('click', function (e) {
+        var messageid = $(this).attr("id").substring(9);
+        $('#modalPageDownEditorHeader').html("{{_('Edit note')}}");
+        var converter = Markdown.getSanitizingConverter();
+        $('#wmd-input').val($("div#note_" + messageid).attr("original"));
+        $('#wmd-preview').html($("div#note_" + messageid).html());
+        $('#modalPageDownEditorSave').attr("messageid", messageid);
+    });
+</script>
+
+<!-- Handling add new note or save old note -->
+<script type="text/javascript">
+    $('#modalPageDownEditorSave').on('click', function (e) {
+        var messageid = $(this).attr("messageid");
+        /*add or save note*/
+        $.post("{{url_for('funnote.save_message', activethreadid=activethreadid, activepaperid=activepaperid)}}", {
+            messageid: messageid,
+            source: $('#wmd-input').val()
+        }, function (data) {
+            //alert(data.newmessageid);
+            if (data.redirect != "") {
+                // @todo: ajax append new noteitem
+                window.location.href = data.redirect;
+            } else {
+                $("div#note_" + messageid).html($('#wmd-preview').html());
+                $("div#note_" + messageid).attr("original", $('#wmd-input').val());
+                $("strong#modified_" + messageid).html("{{format_datetime_now()}}");
+            }
+        });
+    });
+    $(document).ready(function () {
+    });
+</script>
+{% endblock %} 

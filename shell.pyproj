@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1a71d8eb-52b3-464c-9734-b9eb7d9c3739}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>shell.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>shell</Name>
+    <RootNamespace>shell</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="setup.py" />
+    <Compile Include="shell.py" />
+    <Compile Include="update_trial05_db.py" />
+    <Compile Include="update_trial03_db.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="dist\http\httpd.conf" />
+    <Content Include="dist\http\mod_wsgi-win32-ap22py27-3.3.so" />
+    <Content Include="dist\NTService.exe" />
+    <Content Include="dist\settings.cfg" />
+    <Content Include="funfunsay.wsgi" />
+    <Content Include="MANIFEST.in" />
+    <Content Include="README-funfunsay" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="dist\" />
+    <Folder Include="dist\http\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

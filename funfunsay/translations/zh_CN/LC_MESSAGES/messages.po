@@ -1,0 +1,729 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-06-14 12:31+0800\n"
+"PO-Revision-Date: 2012-06-14 00:39+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: zh_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: ffsapp.py:136
+msgid "Please log in to access this page."
+msgstr "请登陆以访问该页面。"
+
+#: forms/frontend.py:18 templates/login.html:97
+msgid "Remember me"
+msgstr "记住我"
+
+#: forms/frontend.py:19
+msgid "Username or email address"
+msgstr "用户名或电子邮件地址"
+
+#: forms/frontend.py:20 forms/frontend.py:27 forms/frontend.py:64
+#: forms/frontend.py:77 templates/layout.html:68 templates/login.html:69
+#: templates/md2img.html:68
+msgid "Password"
+msgstr "密码"
+
+#: forms/frontend.py:21
+msgid "Login"
+msgstr "登陆"
+
+#: forms/frontend.py:26 forms/frontend.py:76 templates/layout.html:67
+#: templates/login.html:68 templates/md2img.html:67
+msgid "Username"
+msgstr "用户名"
+
+#: forms/frontend.py:28 forms/frontend.py:56 forms/frontend.py:78
+msgid "Password again"
+msgstr "再次输入密码"
+
+#: forms/frontend.py:29 forms/frontend.py:79
+msgid "Email address"
+msgstr "电子邮件地址"
+
+#: forms/frontend.py:29 forms/frontend.py:48 forms/frontend.py:79
+msgid "A valid email address is required"
+msgstr "请输入有效的电子邮件地址"
+
+#: forms/frontend.py:30 templates/uprofile.html:28
+msgid "Invitation Code"
+msgstr "邀请码"
+
+#: forms/frontend.py:30
+msgid "Please fill in the invitation code!"
+msgstr "请输入邀请码"
+
+#: forms/frontend.py:31
+msgid "Signup"
+msgstr "注册"
+
+#: forms/frontend.py:35
+msgid "This username is taken"
+msgstr "用户名已被使用"
+
+#: forms/frontend.py:39 forms/frontend.py:84
+msgid "This email is taken"
+msgstr "电子邮件已被使用"
+
+#: forms/frontend.py:43
+msgid "Invalid code"
+msgstr "无效邀请码"
+
+#: forms/frontend.py:47
+msgid "Your email"
+msgstr "你的电子邮件"
+
+#: forms/frontend.py:49
+msgid "Send instructions"
+msgstr "发送说明书"
+
+#: forms/frontend.py:55
+msgid "Password is required"
+msgstr "请输入密码"
+
+#: forms/frontend.py:58
+msgid "Passwords don't match"
+msgstr "密码不匹配"
+
+#: forms/frontend.py:59 templates/md2img.html:137
+#: templates/funnote/_layout.html:205 templates/funnote/fastnote.html:253
+msgid "Save"
+msgstr "保存"
+
+#: forms/frontend.py:65
+msgid "Reauthenticate"
+msgstr "重新认证"
+
+#: forms/frontend.py:70
+msgid "Title of your new twitterbook"
+msgstr ""
+
+#: forms/frontend.py:71
+msgid "Description of your new twitterbook"
+msgstr ""
+
+#: forms/frontend.py:72
+msgid "Create"
+msgstr ""
+
+#: forms/frontend.py:80
+msgid "Commit"
+msgstr "提交"
+
+#: models/twitterbook.py:80
+msgid "Your message was recorded"
+msgstr "您的消息已保存"
+
+#: templates/index.html:4 templates/md2img.html:5 templates/md2img.html:87
+#: templates/funnote/shared_paper.html:5
+msgid "Fun Fun Say"
+msgstr "纷纷说"
+
+#: templates/index.html:13 templates/funnote/fastnote.html:12
+#: templates/funnote/shared_paper.html:14
+msgid "Note"
+msgstr "笔记"
+
+#: templates/index.html:13 templates/funnote/shared_paper.html:14
+msgid "FUN FUN SAY"
+msgstr ""
+
+#: templates/index.html:15 templates/funnote/shared_paper.html:16
+msgid "Simple and flexible personal noting."
+msgstr "简单灵活的个人笔记工具。"
+
+#: templates/index.html:17 templates/funnote/shared_paper.html:18
+msgid "Start Noting Fun!"
+msgstr "开始使用纷笔记！"
+
+#: templates/index.html:20 templates/funnote/shared_paper.html:21
+msgid "Alpha version"
+msgstr "内部测试版本"
+
+#: templates/index.html:25
+msgid "Name"
+msgstr "名称"
+
+#: templates/index.html:26
+msgid "Message"
+msgstr "消息"
+
+#: templates/index.html:47
+msgid "Shared Papers"
+msgstr "共享文章"
+
+#: templates/index.html:52 templates/funnote/funnote.html:52
+#: templates/funnote/msglayout.html:24 templates/funnote/msglayout.html:77
+#: templates/funnote/paper.html:67 templates/macros/_misc.html:132
+#: templates/macros/_misc.html:247 templates/macros/_misc.html:277
+msgid "Modified:"
+msgstr "修改："
+
+#: templates/index.html:56
+msgid "All shared papers"
+msgstr "所有共享文章"
+
+#: templates/index.html:61
+msgid "Shared notes"
+msgstr "共享笔记"
+
+#: templates/index.html:61
+msgid "All shared notes"
+msgstr "所有共享笔记"
+
+#: templates/index.html:97 templates/funnote/msglayout.html:253
+#: templates/funnote/shared_paper.html:65
+msgid "Taken!"
+msgstr "收纳！"
+
+#: templates/index.html:129 templates/funnote/fastnote.html:855
+msgid "Loading more notes..."
+msgstr "加载更多笔记..."
+
+#: templates/index.html:130 templates/funnote/fastnote.html:856
+msgid "No more notes."
+msgstr "没有更多笔记"
+
+#: templates/index.html:168 templates/funnote/fastnote.html:1093
+#: templates/funnote/shared_paper.html:92
+msgid "Loading content..."
+msgstr "加载内容..."
+
+#: templates/layout.html:42 templates/login.html:43 templates/md2img.html:42
+#: templates/funnote/_layout.html:29 templates/funnote/fastnote.html:30
+msgid "FUNFUNSAY"
+msgstr ""
+
+#: templates/layout.html:52 templates/login.html:53 templates/md2img.html:52
+#: templates/funnote/_layout.html:49 templates/funnote/fastnote.html:50
+msgid "User Profile"
+msgstr "用户设置"
+
+#: templates/layout.html:54 templates/login.html:55 templates/md2img.html:54
+msgid "Sign Out"
+msgstr "注销"
+
+#: templates/layout.html:59 templates/login.html:60 templates/md2img.html:59
+msgid "Login use Sina Weibo"
+msgstr "使用新浪微博登录"
+
+#: templates/layout.html:59 templates/login.html:60 templates/md2img.html:59
+msgid "Sina Weibo"
+msgstr "新浪微博"
+
+#: templates/layout.html:62 templates/login.html:63 templates/md2img.html:62
+msgid "Sign Up"
+msgstr "注册"
+
+#: templates/layout.html:69 templates/login.html:70 templates/md2img.html:69
+#: templates/funnote/_layout.html:63 templates/funnote/fastnote.html:64
+msgid "Log in"
+msgstr "登陆"
+
+#: templates/layout.html:75 templates/login.html:76 templates/md2img.html:76
+#: templates/funnote/_layout.html:33 templates/funnote/fastnote.html:34
+msgid "About"
+msgstr "关于"
+
+#: templates/login.html:6
+msgid "Sign In"
+msgstr "登陆"
+
+#: templates/login.html:91
+msgid "Not a member?"
+msgstr "没有帐号？"
+
+#: templates/login.html:91
+msgid "Sign up"
+msgstr "注册"
+
+#: templates/login.html:91
+msgid "please."
+msgstr " "
+
+#: templates/md2img.html:75 templates/funnote/_layout.html:32
+#: templates/funnote/fastnote.html:33
+msgid "My Notes"
+msgstr "我的笔记"
+
+#: templates/md2img.html:123
+msgid "Image Width:"
+msgstr "图像宽度："
+
+#: templates/md2img.html:133
+msgid "Pixels"
+msgstr "像素"
+
+#: templates/md2img.html:135 templates/md2img.html:136
+msgid "Generate PNG Image"
+msgstr "生成PNG图像"
+
+#: templates/md2img.html:209 templates/funnote/fastnote.html:352
+msgid "empty message"
+msgstr "空消息"
+
+#: templates/md2img.html:231
+msgid "Failed generate image."
+msgstr "生成图像失败。"
+
+#: templates/register.html:3
+msgid "Sign Up to FUNFUNSAY"
+msgstr "注册FUNFUNSAY"
+
+#: templates/search.html:7
+#, python-format
+msgid "Search results for \"%(keywords)s\""
+msgstr "\"%(keywords)s\"的搜索结果"
+
+#: templates/search.html:9
+msgid "Keywords needed!"
+msgstr "需要关键字！"
+
+#: templates/search.html:14
+#, python-format
+msgid ""
+"<strong>%(total)s</strong> found for your search "
+"\"<strong>%(keywords)s</strong>\"."
+msgstr "<strong>%(total)s</strong> 搜索找到的 \"<strong>%(keywords)s</strong>\"."
+
+#: templates/search.html:18
+#, python-format
+msgid "Sorry, Nothing found for your search \"<strong>%(keywords)s</strong>\"."
+msgstr "对不起，无法找到匹配的 \"<strong>%(keywords)s</strong>\"."
+
+#: templates/search.html:19
+msgid ""
+"\n"
+"    <p>Suggestions:</p>\n"
+"    <ul>\n"
+"       <li>Make sure all words are spelled correctly.</li>\n"
+"       <li>Try different keywords.</li>\n"
+"       <li>Try more general keywords.</li>\n"
+"    </ul>\n"
+"    "
+msgstr ""
+
+#: templates/uprofile.html:6
+msgid "Manage your profile"
+msgstr "管理个人设置"
+
+#: templates/uprofile.html:12
+msgid "Link to SNS:"
+msgstr "连接到社交网络："
+
+#: templates/uprofile.html:19
+msgid "Linked SNS accounts:"
+msgstr "已连接的社交网络帐号："
+
+#: templates/uprofile.html:28
+msgid "Click to generate an invitation code:"
+msgstr "点击生成邀请码："
+
+#: templates/uprofile.html:29
+msgid "Generate"
+msgstr "生成"
+
+#: templates/funnote/_layout.html:34 templates/funnote/fastnote.html:35
+msgid "Contact us"
+msgstr "联系我们"
+
+#: templates/funnote/_layout.html:45 templates/funnote/_layout.html:56
+#: templates/funnote/fastnote.html:46 templates/funnote/fastnote.html:57
+msgid "Logged in as"
+msgstr "登录为"
+
+#: templates/funnote/_layout.html:51 templates/funnote/fastnote.html:52
+msgid "Logout"
+msgstr "注销"
+
+#: templates/funnote/_layout.html:81
+msgid "to Single Page Mode"
+msgstr "转到单页面模式"
+
+#: templates/funnote/_layout.html:83 templates/funnote/fastnote.html:206
+msgid "Add New Note"
+msgstr "添加新笔记"
+
+#: templates/funnote/_layout.html:88 templates/funnote/fastnote.html:84
+msgid "Threads"
+msgstr "脉络"
+
+#: templates/funnote/_layout.html:89 templates/funnote/fastnote.html:85
+msgid "Papers"
+msgstr "文章"
+
+#: templates/funnote/_layout.html:90 templates/funnote/fastnote.html:87
+msgid "Tags"
+msgstr "标签"
+
+#: templates/funnote/_layout.html:96 templates/funnote/fastnote.html:92
+msgid "Add new thread:"
+msgstr "添加新脉络："
+
+#: templates/funnote/_layout.html:97 templates/funnote/fastnote.html:93
+msgid "+ New Thread Title"
+msgstr "+ 新脉络标题"
+
+#: templates/funnote/_layout.html:98 templates/funnote/_layout.html:126
+#: templates/funnote/fastnote.html:94 templates/funnote/fastnote.html:112
+msgid "Add"
+msgstr "添加"
+
+#: templates/funnote/_layout.html:102 templates/funnote/fastnote.html:97
+msgid "Existing threads:"
+msgstr "已有脉络："
+
+#: templates/funnote/_layout.html:106 templates/funnote/fastnote.html:101
+msgid "All Notes"
+msgstr "所有笔记"
+
+#: templates/funnote/_layout.html:113 templates/funnote/_layout.html:139
+#: templates/macros/_misc.html:175 templates/macros/_misc.html:187
+msgid "Rename"
+msgstr "重命名"
+
+#: templates/funnote/_layout.html:114 templates/macros/_misc.html:176
+#, python-format
+msgid "Confirm delete Thread: %(name)s ?"
+msgstr "确认删除脉络： %(name)s ?"
+
+#: templates/funnote/_layout.html:114 templates/funnote/_layout.html:140
+#: templates/macros/_misc.html:176 templates/macros/_misc.html:188
+msgid "Remove"
+msgstr "删除"
+
+#: templates/funnote/_layout.html:124 templates/funnote/fastnote.html:110
+msgid "Add new paper:"
+msgstr "添加新文章："
+
+#: templates/funnote/_layout.html:125 templates/funnote/fastnote.html:111
+msgid "+ New Paper Title"
+msgstr "+ 新文章标题"
+
+#: templates/funnote/_layout.html:130 templates/funnote/fastnote.html:116
+msgid "Existing papers:"
+msgstr "已有文章："
+
+#: templates/funnote/_layout.html:140 templates/macros/_misc.html:188
+#, python-format
+msgid "Confirm delete Paper: %(name)s ?"
+msgstr "确认删除文章： %(name)s ?"
+
+#: templates/funnote/_layout.html:219 templates/funnote/fastnote.html:266
+msgid "Rename:"
+msgstr "重命名："
+
+#: templates/funnote/_layout.html:222 templates/funnote/fastnote.html:269
+msgid "+ New Name"
+msgstr "+ 新名称"
+
+#: templates/funnote/_layout.html:225 templates/funnote/_layout.html:242
+#: templates/funnote/fastnote.html:226 templates/funnote/fastnote.html:237
+#: templates/funnote/fastnote.html:272 templates/funnote/fastnote.html:289
+#: templates/funnote/funnote.html:68 templates/funnote/funnote.html:78
+#: templates/funnote/msglayout.html:99 templates/funnote/msglayout.html:125
+#: templates/funnote/paper.html:87 templates/funnote/paper.html:96
+#: templates/funnote/paper.html:106 templates/macros/_misc.html:162
+msgid "OK"
+msgstr "确认"
+
+#: templates/funnote/_layout.html:226 templates/funnote/_layout.html:243
+#: templates/funnote/fastnote.html:227 templates/funnote/fastnote.html:238
+#: templates/funnote/fastnote.html:273 templates/funnote/fastnote.html:290
+#: templates/funnote/funnote.html:69 templates/funnote/funnote.html:79
+#: templates/funnote/msglayout.html:100 templates/funnote/msglayout.html:131
+#: templates/funnote/paper.html:88 templates/funnote/paper.html:97
+#: templates/funnote/paper.html:107 templates/macros/_misc.html:29
+#: templates/macros/_misc.html:163
+msgid "Cancel"
+msgstr "取消"
+
+#: templates/funnote/_layout.html:235 templates/funnote/fastnote.html:282
+#: templates/funnote/msglayout.html:92 templates/funnote/paper.html:81
+#: templates/macros/_misc.html:156
+msgid "Confirm delete"
+msgstr "确认删除"
+
+#: templates/funnote/_layout.html:239 templates/funnote/fastnote.html:286
+#: templates/funnote/funnote.html:47 templates/funnote/paper.html:59
+#: templates/funnote/paper.html:84 templates/macros/_misc.html:143
+#: templates/macros/_misc.html:159 templates/macros/_misc.html:242
+msgid "Delete this note?"
+msgstr "删除该笔记？"
+
+#: templates/funnote/_layout.html:296
+msgid "Add new note"
+msgstr "添加新笔记"
+
+#: templates/funnote/fastnote.html:86
+msgid "Times"
+msgstr "次数"
+
+#: templates/funnote/fastnote.html:152
+msgid "Filters:"
+msgstr "过滤器："
+
+#: templates/funnote/fastnote.html:154 templates/funnote/fastnote.html:158
+msgid "Modified Date"
+msgstr "修改时间"
+
+#: templates/funnote/fastnote.html:157
+msgid "Created Date"
+msgstr "创建时间"
+
+#: templates/funnote/fastnote.html:159
+msgid "Order"
+msgstr "排列次序"
+
+#: templates/funnote/fastnote.html:164 templates/funnote/fastnote.html:168
+msgid "Descending"
+msgstr "下降"
+
+#: templates/funnote/fastnote.html:167
+msgid "Ascending"
+msgstr "上升"
+
+#: templates/funnote/fastnote.html:175
+msgid "Search Criteria"
+msgstr "搜索条件"
+
+#: templates/funnote/fastnote.html:180
+msgid "Apply"
+msgstr "应用"
+
+#: templates/funnote/fastnote.html:181
+msgid "Clear Criteria"
+msgstr "清除过滤条件"
+
+#: templates/funnote/fastnote.html:188 templates/funnote/fastnote.html:796
+#: templates/funnote/fastnote.html:1043 templates/funnote/fastnote.html:1069
+#: templates/funnote/funnote.html:23 templates/funnote/funnote.html:106
+#: templates/funnote/itemwidget.html:45 templates/funnote/paper.html:14
+#: templates/funnote/paper.html:41 templates/funnote/paper.html:137
+#: templates/funnote/paper.html:162 templates/macros/_misc.html:202
+msgid "share it!"
+msgstr "共享它！"
+
+#: templates/funnote/fastnote.html:190
+msgid "Use 'order_in_paper' and 'ascending' filter for drag:"
+msgstr "使用'文章中顺序'和'上升'过滤器以启用拖动："
+
+#: templates/funnote/fastnote.html:190 templates/funnote/fastnote.html:940
+msgid "not dragable"
+msgstr "不可拖动"
+
+#: templates/funnote/fastnote.html:254
+msgid "Save and stop editting"
+msgstr "保存并停止编辑"
+
+#: templates/funnote/fastnote.html:254
+msgid "Save & Close"
+msgstr "保存&关闭"
+
+#: templates/funnote/fastnote.html:373 templates/funnote/fastnote.html:396
+msgid "Saved."
+msgstr "已保存。"
+
+#: templates/funnote/fastnote.html:382
+msgid "Saving ..."
+msgstr "正在保存..."
+
+#: templates/funnote/fastnote.html:407
+msgid "Not saved."
+msgstr "未保存。"
+
+#: templates/funnote/fastnote.html:793 templates/funnote/fastnote.html:1037
+#: templates/funnote/fastnote.html:1066 templates/funnote/funnote.html:23
+#: templates/funnote/funnote.html:103 templates/funnote/itemwidget.html:42
+#: templates/funnote/paper.html:14 templates/funnote/paper.html:41
+#: templates/funnote/paper.html:134 templates/funnote/paper.html:159
+#: templates/macros/_misc.html:202
+msgid "shared"
+msgstr "已分享"
+
+#: templates/funnote/fastnote.html:910
+msgid "dragable"
+msgstr "可拖动"
+
+#: templates/funnote/funnote.html:4
+msgid "Notes"
+msgstr "笔记列表"
+
+#: templates/funnote/funnote.html:25 templates/macros/_misc.html:205
+msgid "Took in from"
+msgstr "收纳自"
+
+#: templates/funnote/funnote.html:25
+msgid "This note >>"
+msgstr "这条笔记 >>"
+
+#: templates/funnote/funnote.html:34 templates/funnote/paper.html:48
+#: templates/macros/_misc.html:217
+msgid "organize"
+msgstr "组织"
+
+#: templates/funnote/funnote.html:37 templates/funnote/paper.html:51
+#: templates/macros/_misc.html:223
+msgid "threads"
+msgstr "脉络列表"
+
+#: templates/funnote/funnote.html:40 templates/funnote/paper.html:54
+#: templates/macros/_misc.html:227
+msgid "papers"
+msgstr "文章列表"
+
+#: templates/funnote/funnote.html:43 templates/funnote/paper.html:56
+#: templates/macros/_misc.html:230
+msgid "attach file"
+msgstr "附加文件"
+
+#: templates/funnote/funnote.html:44 templates/funnote/funnote.html:45
+#: templates/funnote/msglayout.html:27 templates/funnote/msglayout.html:28
+#: templates/funnote/paper.html:57 templates/funnote/paper.html:58
+#: templates/macros/_misc.html:232 templates/macros/_misc.html:233
+#: templates/macros/_misc.html:236 templates/macros/_misc.html:238
+msgid "Edit"
+msgstr "编辑"
+
+#: templates/funnote/funnote.html:47 templates/funnote/funnote.html:48
+#: templates/funnote/msglayout.html:30 templates/funnote/msglayout.html:81
+#: templates/funnote/paper.html:59 templates/funnote/paper.html:60
+#: templates/macros/_misc.html:144 templates/macros/_misc.html:242
+#: templates/macros/_misc.html:243
+msgid "Delete"
+msgstr "删除"
+
+#: templates/funnote/funnote.html:54 templates/funnote/msglayout.html:4
+#: templates/funnote/msglayout.html:58 templates/funnote/paper.html:68
+#: templates/macros/_misc.html:133 templates/macros/_misc.html:249
+#: templates/macros/_misc.html:278
+msgid "Comments"
+msgstr "评论列表"
+
+#: templates/funnote/funnote.html:289 templates/funnote/msglayout.html:197
+#: templates/funnote/paper.html:370
+msgid "Edit note"
+msgstr "编辑笔记"
+
+#: templates/funnote/itemwidget.html:85 templates/funnote/itemwidget.html:97
+msgid "Loading list of threads..."
+msgstr "加载脉络列表..."
+
+#: templates/funnote/itemwidget.html:97 templates/funnote/itemwidget.html:145
+#: templates/funnote/itemwidget.html:177 templates/funnote/itemwidget.html:224
+msgid "Failed!"
+msgstr "失败！"
+
+#: templates/funnote/itemwidget.html:121 templates/funnote/itemwidget.html:145
+#: templates/funnote/itemwidget.html:201 templates/funnote/itemwidget.html:224
+msgid "Saving..."
+msgstr "正在保存..."
+
+#: templates/funnote/itemwidget.html:164 templates/funnote/itemwidget.html:177
+msgid "Loading list of papers..."
+msgstr "加载文章列表..."
+
+#: templates/funnote/modal_papers.html:4
+msgid "Select Papers"
+msgstr "选择文章"
+
+#: templates/funnote/modal_threads.html:4
+msgid "Select Threads"
+msgstr "选择脉络"
+
+#: templates/funnote/msglayout.html:19 templates/macros/_misc.html:273
+msgid "&lt;i&gt;Take in&lt;/i&gt; this note as yours!"
+msgstr ""
+
+#: templates/funnote/msglayout.html:20 templates/macros/_misc.html:274
+msgid "Take in!"
+msgstr "收纳！"
+
+#: templates/funnote/msglayout.html:23 templates/funnote/msglayout.html:76
+#: templates/macros/_misc.html:276
+msgid " "
+msgstr ""
+
+#: templates/funnote/msglayout.html:29 templates/funnote/msglayout.html:96
+msgid "Delete this message?"
+msgstr "删除这条消息？"
+
+#: templates/funnote/msglayout.html:65
+msgid "Add comment"
+msgstr "添加评论"
+
+#: templates/funnote/msglayout.html:80
+msgid "Delete this comment?"
+msgstr "删除这条评论？"
+
+#: templates/funnote/msglayout.html:129
+msgid "Characters remaining:"
+msgstr "剩余字数："
+
+#: templates/funnote/paper.html:4 templates/funnote/shared_paper.html:27
+msgid "Paper"
+msgstr "文章"
+
+#: templates/funnote/shared_paper.html:27
+msgid "Shared by"
+msgstr "共享自"
+
+#: templates/macros/_misc.html:205
+msgid "this note >>"
+msgstr "这条笔记 >>"
+
+#: templates/macros/_misc.html:235
+msgid "In Place Edit"
+msgstr "页内编辑"
+
+#: templates/macros/_misc.html:239
+msgid "Re-Take in!"
+msgstr "重新收纳！"
+
+#: templates/macros/blocks.html:6
+msgid "Visit"
+msgstr "访问"
+
+#: templates/macros/blocks.html:6
+msgid "Expires in:"
+msgstr "失效时间"
+
+#: templates/macros/blocks.html:7 templates/macros/blocks.html:8
+msgid "provider.id"
+msgstr ""
+
+#: templates/macros/blocks.html:7
+msgid "Sync"
+msgstr "同步"
+
+#: templates/macros/blocks.html:8
+msgid "Unlink"
+msgstr "断开"
+
+#: views/homesite.py:69
+msgid "Logged in!"
+msgstr "登录成功！"
+
+#: views/homesite.py:73
+msgid "Sorry, invalid login"
+msgstr "对不起，登录无效"
+
+#: views/homesite.py:95
+msgid "You were successfully registered and can login now"
+msgstr "您已成功注册，现在可以登录了"
+
+#: views/homesite.py:108
+msgid "You were logged out"
+msgstr "您已注销"
+
+#: views/homesite.py:271
+msgid "Please generate image only once in 5 seconds.."
+msgstr "请耐心等待5秒钟后再尝试。"
+

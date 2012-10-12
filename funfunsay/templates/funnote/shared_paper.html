@@ -1,0 +1,122 @@
+{% from "macros/_misc.html" import render_shared_note %}
+{% extends 'layout.html' %}
+
+{% block title %}
+  {{_("Fun Fun Say")}}
+{% endblock %}
+
+{% block Contentbar %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span3">
+            <div class="inner jumbotron">
+                <h3>
+                    {{_("Note")}}<small>@ {{_("FUN FUN SAY")}}</small><img src="{{url_for('static', filename='img/ffs8080.png')}}" /></h3>
+                <p>
+                    {{_("Simple and flexible personal noting.")}}</p>
+                <p>
+                    <a href="/n/fast" class="btn btn-large btn-primary">{{_("Start Noting Fun!")}}</a>
+                </p>
+                <p>
+                    <small>{{_("Alpha version")}}</small></p>
+            </div>
+        </div>
+
+        <div class="span9">
+            <div class="">
+            <h3>{{_("Paper")}}:&nbsp;<i>{{paper.name}}</i><small>&nbsp;{{_("Shared by")}}&nbsp;{{paper.author_id}}</small></h3>
+            </div>
+                    <ul class="sortable ul-note-list" id="sharedNoteList" no-more="false">
+            {% for message in messages %}
+            {{render_shared_note(message, current_user)}}
+            {% endfor %}
+					</ul>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<!-- take in shared notes -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("a.take-in").hide();
+
+        $("div.can-take-in-item-div").hover(
+            function () { $(this).find("a.take-in").show(); },
+            function () { $(this).find("a.take-in").hide(); }
+        );
+
+        //$('a.take-in').tooltip({ 'animation': true, 'trigger': 'manual' });
+        $('a.take-in').popover({ 'animation': true });
+
+        $("a.take-in").on("click", function (e) {
+            // prevent scroll to top
+            e.preventDefault();
+            var noteid = $(this).attr("id").substring(7);
+            var $link = $(this);
+            var posturl = "/n/take_in_note/" + noteid;
+            //alert(posturl);
+            $.post(posturl,
+                function (data) {
+                    //alert("hha");
+                    if (data.status == true) {
+                        $link.attr("title", "{{_('Taken!')}}");
+                        $link.tooltip('show');
+                        setTimeout(
+                            function () {
+                                $link.tooltip('hide');
+                                //$link.attr("title", "");
+                                //$link.attr("data-original-title", "");
+                            }, (1000));
+                        //$link.text("");
+                    }
+                });
+        });
+    });
+</script>
+
+<!-- note collapse/expand -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        var converter1 = Markdown.getSanitizingConverter();
+
+        $("body").delegate(".note-stop-propagation", 'click', function (e) {
+            e.stopPropagation();
+        });
+        $("body").delegate(".collapsable", 'click', function (e) {
+            var self = this;
+            if ($(self).data("state") == "collapsed") {
+                var oldBrief = $(self).children(".hide-on-expanded").text();
+                $(self).children(".hide-on-expanded").html('<h3><small>{{_("Loading content...")}}</small><img src="/static/ui-anim_basic_16x16.gif"></h3>');
+                //read data and display it
+                $.ajax({
+                    type: 'get',
+                    url: '{{url_for("funnote.get_original")}}',
+                    data: { noteid: $(self).data('messageid') },
+                    success: function (data) {
+                //expand it!
+                        $(self).children(".note-markdown-div").attr('original', data.content);
+                        $(self).children(".note-markdown-div").html(converter1.makeHtml(data.content));
+                $(self).children(".hide-on-expanded").addClass("hide");
+                        $(self).children(".hide-on-expanded").text(oldBrief);
+                $(self).children(".show-on-expanded").removeClass("hide");
+                $(self).data("state", "expanded");
+                    },
+                    error: function(){
+                        $(self).children(".hide-on-expanded").text(oldBrief);
+                    }
+                });
+            } else {
+                //collapse it!
+                $(self).children(".show-on-expanded").addClass("hide");
+                $(self).children(".note-markdown-div").html('');
+                $(self).children(".note-markdown-div").attr('original', '');
+                $(self).children(".hide-on-expanded").removeClass("hide");
+                $(self).data("state", "collapsed");
+            }
+        });
+    });
+</script>
+{% endblock %}

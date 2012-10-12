@@ -1,0 +1,283 @@
+{% macro render_errors(field) %}
+    {% if field.errors %}
+        {% for error in field.errors %}
+        <span>{{ error }}</span>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+{% macro render_input(field, cls='') %}
+<div class='clearfix'>
+    {{ field.label }}
+    <div class='input'>
+        {% if field.errors %}
+        {{ field(class_=cls~' error') }}
+        {% else %}
+        {{ field(class_=cls) }}
+        {% endif %}
+        <span class="help-inline">
+            {% for error in field.errors %}
+            <span>{{ error }}</span>
+            {% endfor %}
+        </span>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro render_action(field) %}
+    <div class='actions'>
+        {{ field(class_='btn primary') }}&nbsp;&nbsp;&nbsp;&nbsp;<a href='{{ url_for("homesite.home") }}'>{{ _('Cancel') }}</a>
+    </div>
+{% endmacro %}
+
+{% macro render_user_table(users, class='') %}
+<table class='{{ class }}'>
+    <thead>
+        <tr>
+            <td>#</td>
+            <td>Username</td>
+            <td>Email</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td><a href="{{ url_for('user.pub', name=user.name) }}">{{ user.name }}</a></td>
+            <td>{{ user.email }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endmacro %}
+
+{% macro render_pagination(pagination, endpoint) %}
+    {% if pagination.pages > 1 %}
+        <div class='pagination'>
+            <ul>
+                <li class="prev {% if not pagination.has_prev %}disabled{% endif %}"><a href="{{ url_for(endpoint, page=pagination.page-1) }}">&larr; Previous</a></li>
+                {% for page in pagination.iter_pages() %}
+                    {% if page %}
+                        <li class='{% if page == pagination.page %}active{% endif %}'>
+                            <a href='{{ url_for(endpoint, page=page) }}'>{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href='#'>...</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                <li class="next {% if not pagination.has_next %}disabled{% endif %}"><a href="{{ url_for(endpoint, page=pagination.page+1) }}">Next &rarr;</a></li>
+            </ul>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro render_flash_message() %}
+    {% block flash_message %}
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+            <div id='flash_message_container'>
+                {% for category, msg in messages %}
+                    <div class="alert-message {{ category }}" data-alert>
+                      <button class="close" data-dismiss="modal">&times;</button>
+                      <p>{{ msg }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+    {% endblock %}
+{% endmacro %}
+
+{% macro render_pagination(pagination) %}
+  <div class="paging_bootstrap pagination pagination-right"><ul>
+  {% if pagination.has_prev %}
+    <li><a href="{{ url_for_other_page(pagination.page-1)}}">&laquo; Prev</a></li>
+  {% endif %}
+  {%- for page in pagination.iter_pages() %}
+    {% if page %}
+      {% if page != pagination.page %}
+        <li><a href="{{ url_for_other_page(page)}}">{{ page }}</a></li>
+      {% else %}
+        <li class="disabled "><a href="#"><strong>{{ page }}</strong></a></li>
+      {% endif %}
+    {% else %}
+      <li><span class="ellipsis">...</span></li>
+    {% endif %}
+  {%- endfor %}
+  {% if pagination.has_next %}
+    <a href="{{ url_for_other_page(pagination.page+1)}}">Next &raquo;</a>
+  {% endif %}
+  </ul></div>
+{% endmacro %}
+
+{% macro render_notelistitem(note, data_parent) %}
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <div class="accordion-toggle" data-toggle="collapse" data-parent={{data_parent}} data-target="#collapse_{{note.id}}">
+            <h5><small>{{make_note_brief(note.source)}}</small></h5>
+        </div>
+    </div>
+    <div id="collapse_{{note.id}}" class="accordion-body collapse">
+        <div class="accordion-inner">
+            <div class="noteItem" data-toggle="collapse" data-parent={{data_parent}}>
+                <div class="row">
+                        <a class="pull-right"><i class="icon-star-empty pull-right"></i></a>
+               </div>
+                <div class="noteItemValue">
+                    <div rows="4" class="text_area edit_note" id="note_{{note.id}}">
+                        {{note.source}}</div>
+                    <p class="help-block">
+                        <small>{{_("Modified:")}}</small><strong>{{ note.modified_date|datetimeformat}}</strong>
+                        <a class="" href="{{url_for('funnote.message_page', messageid=note.id)}}">{{_("Comments")}}</a>
+                    </p>
+                </div>
+                <div class="row">
+                    <button class="pull-right">
+                        organize</button>
+                    <button class="pull-right">
+                        threads</button>
+                    <button class="pull-right">
+                        attach file</button>
+                    <a class="delete pull-right" data-confirm="{{_('Delete this note?')}}" title="Delete" href="#myModal"
+                        data-toggle="modal" id="delnote#{{note.id}}">{{_("Delete")}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro render_deletemodal() %}
+<div class="modal hide" id="myModal">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">&times;</button>
+    <h3>{{_("Confirm delete")}}</h3>
+  </div>
+  <div class="modal-body">
+    <p>{{_("Delete this note?")}}</p>
+  </div>
+  <div class="modal-footer">
+    <a id="modalAction" data-dismiss="modal" href="#" class="btn btn-primary">{{_("OK")}}</a>
+    <a href="#" data-dismiss="modal" class="btn">{{_("Cancel")}}</a>
+  </div>
+</div>
+{% endmacro %}
+
+
+{% macro render_threadli(id, name) %}
+<li class="navLi" id="noteFiltersThreadLi_{{id}}">
+    <a href="#" class="note-filters note-filters-thread" threadid="{{id}}" id="noteFiltersThread_{{id}}">
+        <i class="icon-film"></i><span id="threadName_{{id}}">{{name}}</span>
+    </a> 
+    <div class="buttonBar hidden">
+        <a threadid="{{id}}" class="thread-rename" data-name="{{name}}" href="#modalRename" data-toggle="modal" rel="tooltip" title="{{_('Rename')}}"><i class="icon-pencil"></i></a>
+        <a threadid="{{id}}" class="thread-delete" href="#myModal" data-toggle="modal" data-confirm="{{_('Confirm delete Thread: %(name)s ?', name=name)}}" rel="tooltip" title="{{_('Remove')}}"><i class="icon-trash"></i></a>
+    </div>
+</li>
+{% endmacro %}
+
+{% macro render_paperli(id, name) %}
+<li class="navLi" id="noteFiltersPaperLi_{{id}}">
+    <a href="#" class="note-filters note-filters-paper" paperid="{{id}}" id="noteFiltersPaper_{{id}}">
+        <i class="icon-file"></i><span id="paperName_{{id}}">{{name}}</span>
+    </a>                                             
+    <div class="buttonBar">
+        <a paperid="{{id}}" class="paper-rename" data-name="{{name}}" href="#modalRename" data-toggle="modal" rel="tooltip" title="{{_('Rename')}}"><i class="icon-pencil"></i></a>
+        <a paperid="{{id}}" class="paper-delete" href="#myModal" data-toggle="modal" data-confirm="{{_('Confirm delete Paper: %(name)s ?', name=name)}}" rel="tooltip" title="{{_('Remove')}}"><i class="icon-trash"></i></a>
+    </div>
+</li>
+{% endmacro %}
+
+{% macro render_note(note, expanded) %}
+<li class="note-sortable ui-state-default" id="macro_li_{{note.id}}" data-messageid="{{note.id}}">
+<div class="note-square-layout noteItem collapsable" data-state="collapsed" data-messageid="{{note.id}}" id="noteItem_{{note.id}}">
+    <div class="row">
+        {% if note.take_in_id==""  %}
+        <a class=""><i class="icon-star-empty pull-right"></i></a>
+        <button id="share_{{note.id}}" shared="{{'true' if note.shared==True else 'false'}}" 
+            class="btn pull-right {{'active' if note.shared==True}} switch-share-note"
+            data-toggle="button">
+            {{_("shared") if note.shared==True else _("share it!")}}
+        </button>
+        {% else %}
+        <h5 class="pull-right"><small>{{_("Took in from")}}&nbsp;<b><i><a class="force-redirect" href="#" redirect="{{url_for('funnote.message_page', messageid='' if not note.take_in_id else note.take_in_id) }}">{{_("this note >>")}}</a></i></b></small></h5>
+        {% endif %}
+    </div>
+    <div class="hide-on-expanded {{'hide' if expanded}}" id="brief_note_{{note.id}}">
+        {{note.source[:100]}}...
+    </div>
+    <div class="noteItemValue {{'hide' if not expanded}} show-on-expanded note-stop-propagation note-markdown-div" id="note_{{note.id}}" original="">
+    </div>
+    <div id="wmd-preview_{{note.id}}" class="wmd-panel wmd-preview"></div>
+    <div class="{{'hide' if not expanded}} show-on-expanded">
+    <div class="row">
+<!--        <button class="note-item-auto-hidden-button note-organize pull-right hidden">
+            {{_("organize")}}</button>
+-->
+        <h3 class="pull-right">&nbsp;</h3><!--Use a space placeholder to avoid display jiggle -->
+        <button class="note-item-auto-hidden-button select-threads pull-right hidden note-stop-propagation"
+         id="selThreads_{{note.id}}" data-target="#modalThreads"
+            data-toggle="modal">
+            {{_("threads")}}</button>
+        <button class="note-item-auto-hidden-button select-papers pull-right hidden note-stop-propagation"
+         id="selPapers_{{note.id}}" data-target="#modalPapers"
+            data-toggle="modal">
+            {{_("papers")}}</button>
+        {% if note.take_in_id==""  %}
+<!--        <button class="note-item-auto-hidden-button note-attach-file pull-right hidden">
+            {{_("attach file")}}</button>
+-->
+        <!--<a class="note-item-auto-hidden-button note-edit pull-right hidden" title="{{_('Edit')}}"
+            href="#modalPageDownEditor" data-toggle="modal" id="editnote_{{note.id}}"><span>&nbsp;</span>{{_("Edit")}}<span>&nbsp;</span></a>-->
+        <a class="note-item-auto-hidden-button note-inplace-edit pull-right hidden note-stop-propagation"
+         title="{{_('In Place Edit')}}"
+            href="#" id="inplaceeditnote_{{note.id}}" messageid="{{note.id}}"><span>&nbsp;</span>{{_("Edit")}}<span>&nbsp;</span></a>
+        {% else %}
+<!--        <a class="note-item-auto-hidden-button note-re-take-in pull-right hidden" title="{{_('Edit')}}"
+            href="#" id="retakeinnote_{{note.id}}"><span>&nbsp;</span>{{_("Re-Take in!")}}<span>&nbsp;</span></a>
+-->        {% endif %}
+        <a class="note-item-auto-hidden-button note-delete pull-right hidden note-stop-propagation"
+         data-confirm="{{_('Delete this note?')}}" title="{{_('Delete')}}"
+            href="#myModal" data-toggle="modal" messageid="{{note.id}}"><span>&nbsp;</span>{{_("Delete")}}<span>&nbsp;</span></a>
+    </div>
+    <div class="row">
+        <p class="help-block pull-right">
+            <small>{{_("Modified:")}}</small><strong id="modified_{{note.id}}">{{ note.modified_date|datetimeformat}}</strong>
+            {% if note.take_in_id==""  %}
+            <a class="" href="{{url_for('funnote.message_page', messageid=note.id)}}">{{_("Comments")}}</a>
+            {% endif %}
+        </p>
+    </div>
+    <br /></div>
+</div>
+</li>
+{% endmacro %}
+
+{% macro render_shared_note(message, current_user) %}
+<li class="note-sortable ui-state-default" id="macro_li_{{message.id}}" data-messageid="{{message.id}}">
+<div class="note-square-layout can-take-in-item-div collapsable" data-messageid="{{message.id}}" 
+    id="sharedNoteItem_{{message.id}}" data-state="collapsed">
+    <div class="" style="background-color:#ffffff"><br /></div>
+    <div class="hide-on-expanded" id="brief_sharednote_{{message.id}}">
+        {{message.source[:100]}}...
+    </div>
+    <div class="hide show-on-expanded note-stop-propagation note-markdown-div">
+    </div>
+    <div class="row">
+        <div class="help-block pull-right">
+            <h3 class="pull-right">&nbsp;</h3><!--Use a space placeholder to avoid display jiggle -->
+            {% if current_user.is_authenticated()==True and current_user.id!=message.author_id %}
+            <a class="take-in note-stop-propagation" href="#" title="" rel="tooltip"
+                data-content="{{_('&lt;i&gt;Take in&lt;/i&gt; this note as yours!')}}"
+                id="takein_{{message.id}}">{{_("Take in!")}}</a>
+            {% endif %}
+            <small>{{_(" ")}}</small>{{message.author_id}}
+            <small>{{_("Modified:")}}</small><strong id="modified_{{message.id}}">{{ message.modified_date|datetimeformat}}</strong>
+            <a class="note-stop-propagation" href="{{url_for('funnote.message_page', messageid=message.id)}}">{{_("Comments")}}</a>
+        </div>
+    </div>
+</div>
+</li>
+{% endmacro %}

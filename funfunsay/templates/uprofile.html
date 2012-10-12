@@ -1,0 +1,68 @@
+{% from "macros/_misc.html" import render_input, render_action %}
+{% from "macros/blocks.html" import connect_block, connect_info_block %}
+{% extends "layout.html" %}
+
+{% block title %}
+  {{_("Manage your profile")}}
+{% endblock %}
+
+{% block Contentbar %}
+<div class="well">
+<div class=''>
+    <h3>{{_("Invitation Code")}}<small>{{_("Click to generate an invitation code:")}}</small></h3>
+    <a class="btn btn-small" href="{{url_for('homesite.generate_invitation_code')}}">{{_("Generate")}}</a>
+    <input id="new-invitation-code" value='{{invitation_code}}' readonly />
+    {% if invitates.count()>0 %}
+    <table>
+    <thead><tr><td>code</td><td>create time</td><td>used time</td><td>used</td></tr>
+    </thead>
+    <tbody>
+    {% for invitate in invitates %}
+    <tr><td>{{invitate['code']}}</td><td>{{invitate['create_time']|datetimeformat}}</td><td>{{'' if invitate['use_time']==None else invitate['use_time']|datetimeformat}}</td><td>{{invitate['used']}}</td></tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    {%else%}
+    <label>No invitation codes</label>
+    {% endif %}
+</div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $(document).ready(function () {
+//        $("body").delegate("a.sync-sina-provider", 'click', function (e) {
+//            var self = this;
+//            var provider = "open.weibo.com";
+//            var user_id_provider = $(self).data("userid_provider");
+//            $.ajax({
+//                type: 'post',
+//                url: '/connect/sina',
+//                data: { provider: provider, user_id_provider: user_id_provider },
+//                success: function (data) {
+//                },
+//                error: function () {
+//                }
+//            });
+//        });
+
+//        $("body").delegate("a.unlink-sina-provider", 'click', function (e) {
+//            var self = this;
+//            var provider = "open.weibo.com";
+//            var user_id_provider = $(self).data("userid_provider");
+//            $.ajax({
+//                type: 'post',
+//                url: '{{url_for("homesite.unlink_provider")}}',
+//                data: { provider: provider, user_id_provider: user_id_provider },
+//                success: function (data) {
+//                },
+//                error: function () {
+//                }
+//            });
+//        });
+    });
+</script>
+{% endblock %}

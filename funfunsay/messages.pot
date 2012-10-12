@@ -1,0 +1,711 @@
+# Translations template for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-04-24 14:26+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: ffsapp.py:115
+msgid "Please log in to access this page."
+msgstr ""
+
+#: forms/frontend.py:18 templates/login.html:16
+msgid "Remember me"
+msgstr ""
+
+#: forms/frontend.py:19
+msgid "Username or email address"
+msgstr ""
+
+#: forms/frontend.py:20 forms/frontend.py:27 forms/frontend.py:64
+#: forms/frontend.py:77 templates/layout.html:60
+msgid "Password"
+msgstr ""
+
+#: forms/frontend.py:21
+msgid "Login"
+msgstr ""
+
+#: forms/frontend.py:26 forms/frontend.py:76 templates/layout.html:59
+msgid "Username"
+msgstr ""
+
+#: forms/frontend.py:28 forms/frontend.py:56 forms/frontend.py:78
+msgid "Password again"
+msgstr ""
+
+#: forms/frontend.py:29 forms/frontend.py:79
+msgid "Email address"
+msgstr ""
+
+#: forms/frontend.py:29 forms/frontend.py:48 forms/frontend.py:79
+msgid "A valid email address is required"
+msgstr ""
+
+#: forms/frontend.py:30 templates/uprofile.html:10
+msgid "Invitation Code"
+msgstr ""
+
+#: forms/frontend.py:30
+msgid "Please fill in the invitation code!"
+msgstr ""
+
+#: forms/frontend.py:31
+msgid "Signup"
+msgstr ""
+
+#: forms/frontend.py:35
+msgid "This username is taken"
+msgstr ""
+
+#: forms/frontend.py:39 forms/frontend.py:84
+msgid "This email is taken"
+msgstr ""
+
+#: forms/frontend.py:43
+msgid "Invalid code"
+msgstr ""
+
+#: forms/frontend.py:47
+msgid "Your email"
+msgstr ""
+
+#: forms/frontend.py:49
+msgid "Send instructions"
+msgstr ""
+
+#: forms/frontend.py:55
+msgid "Password is required"
+msgstr ""
+
+#: forms/frontend.py:58
+msgid "Passwords don't match"
+msgstr ""
+
+#: forms/frontend.py:59 templates/funnote/_layout.html:205
+#: templates/funnote/fastnote.html:212 templates/princilist/princilist.html:68
+msgid "Save"
+msgstr ""
+
+#: forms/frontend.py:65
+msgid "Reauthenticate"
+msgstr ""
+
+#: forms/frontend.py:70 templates/princilist/book.html:19
+msgid "Title of your new twitterbook"
+msgstr ""
+
+#: forms/frontend.py:71
+msgid "Description of your new twitterbook"
+msgstr ""
+
+#: forms/frontend.py:72 templates/princilist/book.html:29
+msgid "Create"
+msgstr ""
+
+#: forms/frontend.py:80
+msgid "Commit"
+msgstr ""
+
+#: models/twitterbook.py:80 views/microblog.py:142
+msgid "Your message was recorded"
+msgstr ""
+
+#: templates/index.html:5 templates/funnote/shared_paper.html:5
+#: templates/princilist/msglayout.html:4
+msgid "Fun Fun Say"
+msgstr ""
+
+#: templates/index.html:14 templates/funnote/fastnote.html:12
+#: templates/funnote/shared_paper.html:14
+msgid "Note"
+msgstr ""
+
+#: templates/index.html:14 templates/funnote/shared_paper.html:14
+msgid "FUN FUN SAY"
+msgstr ""
+
+#: templates/index.html:16 templates/funnote/shared_paper.html:16
+msgid "Simple and flexible personal noting."
+msgstr ""
+
+#: templates/index.html:18 templates/funnote/shared_paper.html:18
+msgid "Start Noting Fun!"
+msgstr ""
+
+#: templates/index.html:21 templates/funnote/shared_paper.html:21
+msgid "Alpha version"
+msgstr ""
+
+#: templates/index.html:26
+msgid "Shared Papers"
+msgstr ""
+
+#: templates/index.html:31 templates/funnote/funnote.html:67
+#: templates/funnote/itemwidget.html:38 templates/funnote/msglayout.html:18
+#: templates/funnote/msglayout.html:50 templates/funnote/paper.html:67
+#: templates/macros/_misc.html:132 templates/macros/_misc.html:205
+#: templates/princilist/msglayout.html:24
+#: templates/princilist/msglayout.html:49
+msgid "Modified:"
+msgstr ""
+
+#: templates/index.html:36
+msgid "Shared Notes"
+msgstr ""
+
+#: templates/index.html:75 templates/funnote/shared_paper.html:65
+msgid "Taken!"
+msgstr ""
+
+#: templates/index.html:107 templates/funnote/fastnote.html:612
+#: templates/funnote/fastnote.html:626 templates/funnote/fastnote.html:642
+#: templates/funnote/fastnote.html:662 templates/funnote/fastnote.html:684
+msgid "Loading more notes..."
+msgstr ""
+
+#: templates/index.html:108 templates/funnote/fastnote.html:613
+#: templates/funnote/fastnote.html:627 templates/funnote/fastnote.html:643
+#: templates/funnote/fastnote.html:663 templates/funnote/fastnote.html:685
+msgid "No more notes."
+msgstr ""
+
+#: templates/layout.html:28 templates/funnote/_layout.html:29
+#: templates/funnote/fastnote.html:30 templates/microblog/_layout.html:32
+msgid "FUNFUNSAY"
+msgstr ""
+
+#: templates/layout.html:31 templates/funnote/_layout.html:32
+#: templates/funnote/fastnote.html:33 templates/microblog/_layout.html:35
+msgid "Home"
+msgstr ""
+
+#: templates/layout.html:32 templates/funnote/_layout.html:33
+#: templates/funnote/fastnote.html:34 templates/microblog/_layout.html:36
+msgid "About"
+msgstr ""
+
+#: templates/layout.html:33 templates/funnote/_layout.html:34
+#: templates/funnote/fastnote.html:35 templates/microblog/_layout.html:37
+msgid "Contact us"
+msgstr ""
+
+#: templates/layout.html:45 templates/layout.html:54
+#: templates/funnote/_layout.html:45 templates/funnote/_layout.html:56
+#: templates/funnote/fastnote.html:46 templates/funnote/fastnote.html:57
+#: templates/microblog/_layout.html:49 templates/microblog/_layout.html:58
+msgid "Logged in as"
+msgstr ""
+
+#: templates/layout.html:47 templates/funnote/_layout.html:49
+#: templates/funnote/fastnote.html:50 templates/microblog/_layout.html:51
+msgid "User Profile"
+msgstr ""
+
+#: templates/layout.html:49 templates/funnote/_layout.html:51
+#: templates/funnote/fastnote.html:52 templates/microblog/_layout.html:53
+msgid "Logout"
+msgstr ""
+
+#: templates/layout.html:61 templates/funnote/_layout.html:63
+#: templates/funnote/fastnote.html:64 templates/microblog/_layout.html:65
+msgid "Log in"
+msgstr ""
+
+#: templates/login.html:10
+msgid "Not a member?"
+msgstr ""
+
+#: templates/login.html:10
+msgid "Sign up"
+msgstr ""
+
+#: templates/login.html:10
+msgid "please."
+msgstr ""
+
+#: templates/register.html:3
+msgid "Sign Up to FUNFUNSAY"
+msgstr ""
+
+#: templates/search.html:7
+#, python-format
+msgid "Search results for \"%(keywords)s\""
+msgstr ""
+
+#: templates/search.html:9
+msgid "Keywords needed!"
+msgstr ""
+
+#: templates/search.html:14
+#, python-format
+msgid ""
+"<strong>%(total)s</strong> found for your search "
+"\"<strong>%(keywords)s</strong>\"."
+msgstr ""
+
+#: templates/search.html:18
+#, python-format
+msgid "Sorry, Nothing found for your search \"<strong>%(keywords)s</strong>\"."
+msgstr ""
+
+#: templates/search.html:19
+msgid ""
+"\n"
+"    <p>Suggestions:</p>\n"
+"    <ul>\n"
+"       <li>Make sure all words are spelled correctly.</li>\n"
+"       <li>Try different keywords.</li>\n"
+"       <li>Try more general keywords.</li>\n"
+"    </ul>\n"
+"    "
+msgstr ""
+
+#: templates/uprofile.html:5
+msgid "Manage your profile"
+msgstr ""
+
+#: templates/uprofile.html:10
+msgid "Click to generate an invitation code:"
+msgstr ""
+
+#: templates/uprofile.html:11
+msgid "Generate"
+msgstr ""
+
+#: templates/funnote/_layout.html:81
+msgid "to Single Page Mode"
+msgstr ""
+
+#: templates/funnote/_layout.html:83 templates/funnote/fastnote.html:85
+msgid "Add New Note"
+msgstr ""
+
+#: templates/funnote/_layout.html:88 templates/funnote/fastnote.html:90
+msgid "Threads"
+msgstr ""
+
+#: templates/funnote/_layout.html:89 templates/funnote/fastnote.html:91
+msgid "Papers"
+msgstr ""
+
+#: templates/funnote/_layout.html:90 templates/funnote/fastnote.html:92
+msgid "Tags"
+msgstr ""
+
+#: templates/funnote/_layout.html:96 templates/funnote/fastnote.html:97
+msgid "Add new thread:"
+msgstr ""
+
+#: templates/funnote/_layout.html:97 templates/funnote/fastnote.html:98
+msgid "+ New Thread Title"
+msgstr ""
+
+#: templates/funnote/_layout.html:98 templates/funnote/_layout.html:126
+#: templates/funnote/fastnote.html:99 templates/funnote/fastnote.html:117
+msgid "Add"
+msgstr ""
+
+#: templates/funnote/_layout.html:102 templates/funnote/fastnote.html:102
+msgid "Existing threads:"
+msgstr ""
+
+#: templates/funnote/_layout.html:106 templates/funnote/fastnote.html:106
+msgid "All Notes"
+msgstr ""
+
+#: templates/funnote/_layout.html:113 templates/funnote/_layout.html:139
+#: templates/macros/_misc.html:175 templates/macros/_misc.html:187
+msgid "Rename"
+msgstr ""
+
+#: templates/funnote/_layout.html:114 templates/macros/_misc.html:176
+#, python-format
+msgid "Confirm delete Thread: %(name)s ?"
+msgstr ""
+
+#: templates/funnote/_layout.html:114 templates/funnote/_layout.html:140
+#: templates/macros/_misc.html:176 templates/macros/_misc.html:188
+msgid "Remove"
+msgstr ""
+
+#: templates/funnote/_layout.html:124 templates/funnote/fastnote.html:115
+msgid "Add new paper:"
+msgstr ""
+
+#: templates/funnote/_layout.html:125 templates/funnote/fastnote.html:116
+msgid "+ New Paper Title"
+msgstr ""
+
+#: templates/funnote/_layout.html:130 templates/funnote/fastnote.html:120
+msgid "Existing papers:"
+msgstr ""
+
+#: templates/funnote/_layout.html:140 templates/macros/_misc.html:188
+#, python-format
+msgid "Confirm delete Paper: %(name)s ?"
+msgstr ""
+
+#: templates/funnote/_layout.html:219 templates/funnote/fastnote.html:226
+msgid "Rename:"
+msgstr ""
+
+#: templates/funnote/_layout.html:222 templates/funnote/fastnote.html:229
+msgid "+ New Name"
+msgstr ""
+
+#: templates/funnote/_layout.html:225 templates/funnote/_layout.html:242
+#: templates/funnote/fastnote.html:180 templates/funnote/fastnote.html:190
+#: templates/funnote/fastnote.html:232 templates/funnote/fastnote.html:249
+#: templates/funnote/funnote.html:81 templates/funnote/funnote.html:91
+#: templates/funnote/msglayout.html:72 templates/funnote/msglayout.html:98
+#: templates/funnote/paper.html:87 templates/funnote/paper.html:96
+#: templates/funnote/paper.html:106 templates/macros/_misc.html:162
+#: templates/princilist/msglayout.html:65
+#: templates/princilist/msglayout.html:88
+#: templates/princilist/msglayout.html:118
+msgid "OK"
+msgstr ""
+
+#: templates/funnote/_layout.html:226 templates/funnote/_layout.html:243
+#: templates/funnote/fastnote.html:181 templates/funnote/fastnote.html:191
+#: templates/funnote/fastnote.html:233 templates/funnote/fastnote.html:250
+#: templates/funnote/funnote.html:82 templates/funnote/funnote.html:92
+#: templates/funnote/msglayout.html:73 templates/funnote/msglayout.html:104
+#: templates/funnote/paper.html:88 templates/funnote/paper.html:97
+#: templates/funnote/paper.html:107 templates/macros/_misc.html:29
+#: templates/macros/_misc.html:163 templates/princilist/book.html:27
+#: templates/princilist/msglayout.html:66
+#: templates/princilist/msglayout.html:94
+#: templates/princilist/msglayout.html:124
+#: templates/princilist/princilist.html:66
+msgid "Cancel"
+msgstr ""
+
+#: templates/funnote/_layout.html:235 templates/funnote/fastnote.html:242
+#: templates/funnote/msglayout.html:65 templates/funnote/paper.html:81
+#: templates/macros/_misc.html:156 templates/princilist/msglayout.html:58
+msgid "Confirm delete"
+msgstr ""
+
+#: templates/funnote/_layout.html:239 templates/funnote/fastnote.html:246
+#: templates/funnote/funnote.html:62 templates/funnote/itemwidget.html:33
+#: templates/funnote/paper.html:59 templates/funnote/paper.html:84
+#: templates/macros/_misc.html:143 templates/macros/_misc.html:159
+msgid "Delete this note?"
+msgstr ""
+
+#: templates/funnote/_layout.html:296 templates/funnote/fastnote.html:304
+msgid "Add new note"
+msgstr ""
+
+#: templates/funnote/fastnote.html:83
+msgid "to Pagination Mode"
+msgstr ""
+
+#: templates/funnote/fastnote.html:553 templates/funnote/funnote.html:43
+#: templates/funnote/funnote.html:116 templates/funnote/itemwidget.html:14
+#: templates/funnote/itemwidget.html:73 templates/funnote/paper.html:14
+#: templates/funnote/paper.html:41 templates/funnote/paper.html:134
+#: templates/funnote/paper.html:159
+msgid "shared"
+msgstr ""
+
+#: templates/funnote/fastnote.html:556 templates/funnote/funnote.html:43
+#: templates/funnote/funnote.html:119 templates/funnote/itemwidget.html:14
+#: templates/funnote/itemwidget.html:76 templates/funnote/paper.html:14
+#: templates/funnote/paper.html:41 templates/funnote/paper.html:137
+#: templates/funnote/paper.html:162
+msgid "share it!"
+msgstr ""
+
+#: templates/funnote/funnote.html:4
+msgid "Notes"
+msgstr ""
+
+#: templates/funnote/funnote.html:11
+msgid "All notes"
+msgstr ""
+
+#: templates/funnote/funnote.html:17 templates/princilist/princilist.html:26
+msgid "Filtering"
+msgstr ""
+
+#: templates/funnote/funnote.html:24 templates/princilist/princilist.html:34
+msgid "f"
+msgstr ""
+
+#: templates/funnote/funnote.html:25 templates/princilist/princilist.html:35
+msgid "g"
+msgstr ""
+
+#: templates/funnote/funnote.html:51 templates/funnote/itemwidget.html:22
+#: templates/funnote/paper.html:48
+msgid "organize"
+msgstr ""
+
+#: templates/funnote/funnote.html:54 templates/funnote/itemwidget.html:25
+#: templates/funnote/paper.html:51
+msgid "threads"
+msgstr ""
+
+#: templates/funnote/funnote.html:57 templates/funnote/itemwidget.html:28
+#: templates/funnote/paper.html:54
+msgid "papers"
+msgstr ""
+
+#: templates/funnote/funnote.html:59 templates/funnote/itemwidget.html:30
+#: templates/funnote/paper.html:56
+msgid "attach file"
+msgstr ""
+
+#: templates/funnote/funnote.html:60 templates/funnote/funnote.html:61
+#: templates/funnote/itemwidget.html:31 templates/funnote/itemwidget.html:32
+#: templates/funnote/msglayout.html:21 templates/funnote/msglayout.html:22
+#: templates/funnote/paper.html:57 templates/funnote/paper.html:58
+msgid "Edit"
+msgstr ""
+
+#: templates/funnote/funnote.html:62 templates/funnote/funnote.html:63
+#: templates/funnote/itemwidget.html:33 templates/funnote/itemwidget.html:34
+#: templates/funnote/msglayout.html:24 templates/funnote/msglayout.html:54
+#: templates/funnote/paper.html:59 templates/funnote/paper.html:60
+#: templates/macros/_misc.html:144 templates/princilist/msglayout.html:22
+#: templates/princilist/msglayout.html:47
+msgid "Delete"
+msgstr ""
+
+#: templates/funnote/funnote.html:68 templates/funnote/itemwidget.html:39
+#: templates/funnote/msglayout.html:4 templates/funnote/msglayout.html:31
+#: templates/funnote/paper.html:68 templates/macros/_misc.html:133
+#: templates/macros/_misc.html:206 templates/princilist/msglayout.html:28
+msgid "Comments"
+msgstr ""
+
+#: templates/funnote/funnote.html:302 templates/funnote/itemwidget.html:90
+#: templates/funnote/msglayout.html:170 templates/funnote/paper.html:370
+msgid "Edit note"
+msgstr ""
+
+#: templates/funnote/modal_papers.html:4
+msgid "Select Papers"
+msgstr ""
+
+#: templates/funnote/modal_threads.html:4
+msgid "Select Threads"
+msgstr ""
+
+#: templates/funnote/msglayout.html:17 templates/funnote/msglayout.html:49
+#: templates/macros/_misc.html:204
+msgid " "
+msgstr ""
+
+#: templates/funnote/msglayout.html:23 templates/funnote/msglayout.html:69
+#: templates/princilist/msglayout.html:21
+#: templates/princilist/msglayout.html:62
+msgid "Delete this message?"
+msgstr ""
+
+#: templates/funnote/msglayout.html:38 templates/princilist/msglayout.html:34
+msgid "Add comment"
+msgstr ""
+
+#: templates/funnote/msglayout.html:53 templates/princilist/msglayout.html:46
+msgid "Delete this comment?"
+msgstr ""
+
+#: templates/funnote/msglayout.html:102 templates/princilist/msglayout.html:92
+#: templates/princilist/msglayout.html:122
+msgid "Characters remaining:"
+msgstr ""
+
+#: templates/funnote/paper.html:4 templates/funnote/shared_paper.html:27
+msgid "Paper"
+msgstr ""
+
+#: templates/funnote/shared_paper.html:27
+msgid "Shared by"
+msgstr ""
+
+#: templates/macros/_misc.html:83
+msgid "X"
+msgstr ""
+
+#: templates/macros/_misc.html:201
+msgid "&lt;i&gt;Take in&lt;/i&gt; this note as yours!"
+msgstr ""
+
+#: templates/macros/_misc.html:202
+msgid "Take in!"
+msgstr ""
+
+#: templates/microblog/index.html:4 templates/microblog/index.html:9
+msgid "miiBlog"
+msgstr ""
+
+#: templates/microblog/index.html:10
+msgid "It's a Microblog! Share your ideas!"
+msgstr ""
+
+#: templates/princilist/_layout.html:4 templates/princilist/princilist.html:10
+msgid "Twitterbooks"
+msgstr ""
+
+#: templates/princilist/book.html:17
+msgid "It's simple, just input title and description."
+msgstr ""
+
+#: templates/princilist/book.html:21
+msgid "Description of your new twitterbook ..."
+msgstr ""
+
+#: templates/princilist/princilist.html:13
+msgid "Principles of Life"
+msgstr ""
+
+#: templates/princilist/princilist.html:20
+msgid "More ..."
+msgstr ""
+
+#: templates/princilist/princilist.html:22
+msgid "Create New Book"
+msgstr ""
+
+#: templates/princilist/princilist.html:33
+msgid "e"
+msgstr ""
+
+#: templates/princilist/princilist.html:57
+msgid "Remember your principle of life:"
+msgstr ""
+
+#: templates/princilist/princilist.html:60
+msgid "A new principle ..."
+msgstr ""
+
+#: templates/princilist/princilist.html:85
+msgid "Public to Everyone"
+msgstr ""
+
+#: templates/princilist/princilist.html:87
+msgid "Show by Friends"
+msgstr ""
+
+#: templates/princilist/princilist.html:89
+msgid "Make Private"
+msgstr ""
+
+#: templates/princilist/princilist.html:93
+msgid "Sort By"
+msgstr ""
+
+#: templates/princilist/princilist.html:95
+msgid "Natural Order"
+msgstr ""
+
+#: templates/princilist/princilist.html:96
+msgid "Alphabetical"
+msgstr ""
+
+#: templates/princilist/princilist.html:97
+msgid "Date Created"
+msgstr ""
+
+#: templates/princilist/princilist.html:98
+msgid "Date Modified"
+msgstr ""
+
+#: templates/princilist/princilist.html:99
+msgid "Rate Score"
+msgstr ""
+
+#: templates/princilist/princilist.html:100
+msgid "Follower Number"
+msgstr ""
+
+#: templates/princilist/princilist.html:101
+msgid "Comment Number"
+msgstr ""
+
+#: templates/princilist/princilist.html:106
+msgid "Direction"
+msgstr ""
+
+#: templates/princilist/princilist.html:108
+msgid "Ascending"
+msgstr ""
+
+#: templates/princilist/princilist.html:109
+msgid "Descending"
+msgstr ""
+
+#: templates/princilist/princilist.html:113
+msgid "Expand All Notes"
+msgstr ""
+
+#: templates/princilist/princilist.html:114
+msgid "Collapse All Notes"
+msgstr ""
+
+#: templates/princilist/princilist.html:118
+msgid "Add Item"
+msgstr ""
+
+#: templates/princilist/princilist.html:136
+msgid "No content so far."
+msgstr ""
+
+#: templates/princilist/princilist.html:138
+msgid "Click to create one!"
+msgstr ""
+
+#: views/homesite.py:74
+msgid "Logged in!"
+msgstr ""
+
+#: views/homesite.py:78
+msgid "Sorry, invalid login"
+msgstr ""
+
+#: views/homesite.py:103
+msgid "You were successfully registered and can login now"
+msgstr ""
+
+#: views/homesite.py:114
+msgid "You were logged out"
+msgstr ""
+
+#: views/microblog.py:117
+#, python-format
+msgid "You are now following \"%(username)s\""
+msgstr ""
+
+#: views/microblog.py:130
+#, python-format
+msgid "You are no longer following \"%(username)s\""
+msgstr ""
+
+#: views/microblog.py:155
+msgid "Your reply was recorded"
+msgstr ""
+
+#: views/princilist.py:44
+msgid "This twitterbook is a place to note all your principles of Life"
+msgstr ""
+
+#: views/repartee.py:27
+msgid "Repartee: Function under construction."
+msgstr ""
+

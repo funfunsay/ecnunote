@@ -1,0 +1,268 @@
+{% extends 'funnote/_layout.html' %} 
+<!--The template structure for single message display-->
+{% block title %} 
+{{_("Comments")}} 
+{% endblock %}
+
+{% block Contentbar %}
+<div class="">
+    <div class="">
+        <div class="page-header">
+            <div class="mini-layout can-take-in-item-div" id="viewMessageContainer">
+                <div class="noteItemValue" id="note_{{message.id}}" original="{{message.source}}">
+                    {{message.source|markdown}}
+                </div>
+                <div class="row">
+                    <p class="help-block pull-right">
+                        {% if current_user.is_authenticated()==True and current_user.id!=message.author_id %}
+                        <a class="take-in" href="#" title="" rel="tooltip"
+                            data-content="{{_('&lt;i&gt;Take in&lt;/i&gt; this note as yours!')}}"
+                            id="takein_{{message.id}}">{{_("Take in!")}}</a>&nbsp;
+                        {% else %}
+                        {% endif %}
+                        <small>{{_(" ")}}</small>{{message.author_id}}
+                        <small>{{_("Modified:")}}</small><strong id="modified_{{message.id}}">{{ message.modified_date|datetimeformat}}</strong>
+                    </p>
+                    {% if message.author_id== current_user.id %}
+                    <a class="note-edit pull-right" title="{{_('Edit')}}" href="#modalPageDownEditor"
+                        data-toggle="modal" id="editnote_{{message.id}}"><span>&nbsp;</span>{{_("Edit")}}<span>&nbsp;</span></a>
+                    <a class="note-delete pull-right" data-confirm="{{_('Delete this message?')}}" title="Delete" href="#myModal"
+                        data-toggle="modal" messageid="{{message.id}}">{{_("Delete")}}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+<script type="text/javascript"><!--
+    google_ad_client = "ca-pub-5289342848415893";
+    /*  */
+    google_ad_slot = "5491153629";
+    google_ad_width = 728;
+    google_ad_height = 15;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<script type="text/javascript"><!--
+    google_ad_client = "ca-pub-5289342848415893";
+    /* ffsbar */
+    google_ad_slot = "6506146704";
+    google_ad_width = 728;
+    google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+        <h3>
+            {{_("Comments")}}</h3>
+
+        <form id="newComment" action="{{url_for('funnote.save_comment')}}" method="post">
+            <input type="hidden" name="messageid" value="{{message.id}}" id="inputMessageId" />
+            <input type="hidden" name="commentid" value="" id="Hidden1" />
+            <textarea class="text_area" name="comment" id="commentArea"></textarea>
+            <button class="btn btn-large" type="submit">
+                {{_("Add comment")}}</button>
+        </form>
+        <hr />
+        {% for comment in comments %}
+        <div class="commentItem">
+            <div class="">
+                <div class="{{'edit_comment' if comment.author_id==current_user.id}}" id="comment#{{comment.id}}">
+                    {{comment.source}}</div>
+                <br />
+                <div class="row">
+                    <p class="help-block pull-right">
+                        <small>{{_(" ")}}</small>{{comment.author_id}}
+                        <small>{{_("Modified:")}}</small><strong id="modified_{{comment.id}}">{{ comment.modified_date|datetimeformat}}</strong>
+                    </p>
+                    {% if comment.author_id==current_user.id %}
+                    <a class="comment-delete pull-right" data-confirm="{{_('Delete this comment?')}}" title="Delete" href="#myModal"
+                        data-toggle="modal" commentid="{{comment.id}}">{{_("Delete")}}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <hr />
+        {% endfor %}
+        <div class="modal hide" id="myModal">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+                <h3>
+                    {{_("Confirm delete")}}</h3>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {{_("Delete this message?")}}</p>
+            </div>
+            <div class="modal-footer">
+                <a id="modalAction" data-dismiss="modal" href="#" class="btn btn-primary">{{_("OK")}}</a>
+                <a href="#" data-dismiss="modal" class="btn">{{_("Cancel")}}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} <!--block Contentbar-->
+
+{% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.jeditable.js') }}"></script>
+
+<script type="text/javascript">
+    $("div.edit_comment").editable(function (value, settings) {
+        var self = this; /*self is the <div> DOM object with text_area class*/
+        $.post("{{url_for('funnote.save_comment')}}", {
+            messageid: "{{message.id}}",
+            commentid: $(self).attr("id").substring(8),
+            comment: value
+        }, function (data) {
+        });
+        return value; /*return value to jeditable to fill*/
+    }, {
+        indicator: "<img src='{{url_for('static', filename='ui-anim_basic_16x16.gif')}}>",
+        tooltip: "Click to edit...",
+        event: "click",
+        style: "inherit",
+        submit: "{{_('OK')}}",
+        rows: 3,
+        name: "comment",
+        maxlength: "{{g.MAX_LEN_P*10}}",
+        remainintTip: "{{_('Characters remaining:')}}",
+        id: "editCommentArea",
+        cancel: "{{_('Cancel')}}",
+        type: "textarea",
+        onblur: "submit",
+        callback: function (value, settings) {
+            //console.log(this);
+            //console.log(value);
+            //console.log(settings);
+        }
+    });
+
+    $(document).ready(function () {
+        $("a.delete").hide();
+
+        $("div.commentItem").hover(
+            function () { $(this).find("a.delete").show(); },
+            function () { $(this).find("a.delete").hide(); }
+        );
+
+        $("div#viewMessageContainer").hover(
+            function () { $(this).find("a.delete").show(); },
+            function () { $(this).find("a.delete").hide(); }
+        );
+
+        // transfer comment id to modal 
+        $("a.note-delete").on('click', function (e) {
+            $('a#modalAction').attr("messageid", $(this).attr("messageid"));
+            $('div#myModal div.modal-body p').html($(this).data("confirm"));
+            //alert($(this).attr("id"));
+        });
+
+        // transfer comment id to modal 
+        $("a.comment-delete").on('click', function (e) {
+            $('a#modalAction').attr("commentid", $(this).attr("commentid"));
+            $('div#myModal div.modal-body p').html($(this).data("confirm"));
+            //alert($(this).attr("id"));
+        });
+
+        // perform modal "OK" action
+        $('a#modalAction').on('click', function (e) {
+            //e.preventDefault();
+            //alert('ok'); triggered!
+            //alert($(this).attr("id"));
+            if ($(this).attr("commentid") != null) {//delete comment
+                var commentid = $(this).attr("commentid");
+                $.post("{{url_for('funnote.delete_comment', activethreadid=activethreadid, activepaperid=activepaperid)}}", {
+                    commentid: commentid
+                }, function (data) {
+                    window.location.href = data.redirect;
+                });
+            } else if ($(this).attr("messageid") != null) {//delete message
+                var messageid = $(this).attr("messageid");
+                $.post("{{url_for('funnote.delete_message', activethreadid=activethreadid, activepaperid=activepaperid)}}", {
+                    messageid: messageid
+                }, function (data) {
+                    window.location.href = data.redirect;
+                });
+            }
+        });
+    });
+</script>
+
+
+<!-- Prepare for edit note -->
+<script type="text/javascript">
+    $('.note-edit').on('click', function (e) {
+        var messageid = $(this).attr("id").substring(9);
+        $('#modalPageDownEditorHeader').html("{{_('Edit note')}}");
+        var converter = Markdown.getSanitizingConverter();
+        $('#wmd-input').val($("div#note_" + messageid).attr("original"));
+        $('#wmd-preview').html($("div#note_" + messageid).html());
+        $('#modalPageDownEditorSave').attr("messageid", messageid);
+    });
+</script>
+
+<!-- Handling add new note or save old note -->
+<script type="text/javascript">
+    $('#modalPageDownEditorSave').on('click', function (e) {
+        var messageid = $(this).attr("messageid");
+        /*add or save note*/
+        $.post("{{url_for('funnote.save_message', activethreadid=activethreadid, activepaperid=activepaperid)}}", {
+            messageid: messageid,
+            source: $('#wmd-input').val()
+        }, function (data) {
+            //alert(data.newmessageid);
+            if (data.redirect != "") {
+                // @todo: ajax append new noteitem
+                window.location.href = data.redirect;
+            } else {
+                $("div#note_" + messageid).html($('#wmd-preview').html());
+                $("div#note_" + messageid).attr("original", $('#wmd-input').val());
+                $("strong#modified_" + messageid).html("{{format_datetime_now()}}");
+            }
+        });
+    });
+    $(document).ready(function () {
+    });
+</script>
+
+<!-- take in shared notes -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("a.take-in").hide();
+
+        $("div.can-take-in-item-div").hover(
+            function () { $(this).find("a.take-in").show(); },
+            function () { $(this).find("a.take-in").hide(); }
+        );
+
+        //$('a.take-in').tooltip({ 'animation': true, 'trigger': 'manual' });
+        $('a.take-in').popover({ 'animation': true });
+
+        $("body").delegate("a.take-in", "click", function (e) {
+            // prevent scroll to top
+            e.preventDefault();
+            var noteid = $(this).attr("id").substring(7);
+            var $link = $(this);
+            var posturl = "/n/take_in_note/" + noteid;
+            //alert(posturl);
+            $.post(posturl,
+                function (data) {
+                    //alert("hha");
+                    if (data.status == true) {
+                        $link.attr("title", "{{_('Taken!')}}");
+                        $link.tooltip('show');
+                        setTimeout(
+                            function () {
+                                $link.tooltip('hide');
+                                //$link.attr("title", "");
+                                //$link.attr("data-original-title", "");
+                            }, (1000));
+                        //$link.text("");
+                    }
+                });
+        });
+    });
+</script>
+
+{% endblock %} 

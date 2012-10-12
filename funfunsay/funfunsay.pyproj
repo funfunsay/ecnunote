@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>6dc45c75-1082-4c5a-9e76-b076e67da054</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>C:\Python27\Lib\site-packages\</SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>ffs</Name>
+    <RootNamespace>ffs</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>2af0f10d-7135-4994-9156-5d01c9c11b7e</InterpreterId>
+    <InterpreterVersion>2.7</InterpreterVersion>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments />
+    <InterpreterPath />
+    <InterpreterArguments>shell.py run</InterpreterArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="config.py" />
+    <Compile Include="extensions.py" />
+    <Compile Include="ffsapp.py" />
+    <Compile Include="forms\frontend.py" />
+    <Compile Include="forms\__init__.py" />
+    <Compile Include="models\message.py" />
+    <Compile Include="models\microblog.py" />
+    <Compile Include="models\note.py" />
+    <Compile Include="models\twitterbook.py" />
+    <Compile Include="models\types.py" />
+    <Compile Include="models\user.py" />
+    <Compile Include="models\weibo.py" />
+    <Compile Include="models\__init__.py" />
+    <Compile Include="utils\escape.py" />
+    <Compile Include="utils\html2text.py" />
+    <Compile Include="utils\modt2i.py" />
+    <Compile Include="utils\provider.py" />
+    <Compile Include="utils\__init__.py" />
+    <Compile Include="views\ads.py" />
+    <Compile Include="views\funnote.py" />
+    <Compile Include="views\homesite.py" />
+    <Compile Include="views\pagination.py" />
+    <Compile Include="views\weibo.py" />
+    <Compile Include="views\__init__.py" />
+    <Compile Include="__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="babel.cfg" />
+    <Content Include="messages.pot" />
+    <Content Include="static\css\autotextarea.css" />
+    <Content Include="static\css\bootstrap-responsive.css" />
+    <Content Include="static\css\bootstrap-responsive.min.css" />
+    <Content Include="static\css\bootstrap.css" />
+    <Content Include="static\css\bootstrap.min.css" />
+    <Content Include="static\css\catchapp.css" />
+    <Content Include="static\css\catchstyle.css" />
+    <Content Include="static\css\docs.css" />
+    <Content Include="static\css\jquery.ui.autocomplete.custom.css" />
+    <Content Include="static\css\style.css" />
+    <Content Include="static\img\footer.png" />
+    <Content Include="static\js\application.js" />
+    <Content Include="static\js\autoresize.jquery.min.js" />
+    <Content Include="static\js\bootstrap-alert.js" />
+    <Content Include="static\js\bootstrap-button.js" />
+    <Content Include="static\js\bootstrap-carousel.js" />
+    <Content Include="static\js\bootstrap-collapse.js" />
+    <Content Include="static\js\bootstrap-dropdown.js" />
+    <Content Include="static\js\bootstrap-modal.js" />
+    <Content Include="static\js\bootstrap-popover.js" />
+    <Content Include="static\js\bootstrap-scrollspy.js" />
+    <Content Include="static\js\bootstrap-tab.js" />
+    <Content Include="static\js\bootstrap-tooltip.js" />
+    <Content Include="static\js\bootstrap-transition.js" />
+    <Content Include="static\js\bootstrap-typeahead.js" />
+    <Content Include="static\js\fastnote.js" />
+    <Content Include="static\js\funfunsay.js" />
+    <Content Include="static\js\google-code-prettify\prettify.js" />
+    <Content Include="static\js\jquery-1.7.1.min.js" />
+    <Content Include="static\js\jquery-ui-1.8.18.custom.min.js" />
+    <Content Include="static\js\jquery-ui-1.8.autocomplete.min.js" />
+    <Content Include="static\js\jquery-ui-1.8.core-and-interactions.min.js" />
+    <Content Include="static\js\jquery.autoresize.js" />
+    <Content Include="static\js\jquery.form.js" />
+    <Content Include="static\js\jquery.jeditable.js" />
+    <Content Include="static\js\jquery.jeditable.mini.js" />
+    <Content Include="static\js\jquery.js" />
+    <Content Include="static\js\jquery.maxlength.js" />
+    <Content Include="static\js\tag-it.js" />
+    <Content Include="static\pagedown\demo\browser\demo.css" />
+    <Content Include="static\pagedown\demo\browser\demo.html" />
+    <Content Include="static\pagedown\demo\node\demo.js" />
+    <Content Include="static\pagedown\LICENSE.txt" />
+    <Content Include="static\pagedown\Markdown.Converter.js" />
+    <Content Include="static\pagedown\Markdown.Editor.js" />
+    <Content Include="static\pagedown\Markdown.Sanitizer.js" />
+    <Content Include="static\pagedown\README.txt" />
+    <Content Include="static\pagedown\resources\wmd-buttons.psd" />
+    <Content Include="static\pagedown\wmd-buttons.png" />
+    <Content Include="static\ui-anim_basic_16x16.gif" />
+    <Content Include="static\vote-arrow-down-on.png" />
+    <Content Include="static\vote-arrow-down.png" />
+    <Content Include="static\vote-arrow-up-on.png" />
+    <Content Include="static\vote-arrow-up.png" />
+    <Content Include="templates\ads\index.html" />
+    <Content Include="templates\funnote\fastnote.html" />
+    <Content Include="templates\funnote\funnote.html" />
+    <Content Include="templates\funnote\itemwidget.html" />
+    <Content Include="templates\funnote\message.html" />
+    <Content Include="templates\funnote\modal_threads.html" />
+    <Content Include="templates\funnote\modal_papers.html" />
+    <Content Include="templates\funnote\msglayout.html" />
+    <Content Include="templates\funnote\paper.html" />
+    <Content Include="templates\funnote\shared_paper.html" />
+    <Content Include="templates\funnote\paperli.html" />
+    <Content Include="templates\funnote\threadli.html" />
+    <Content Include="templates\index.html" />
+    <Content Include="templates\layout.html" />
+    <Content Include="templates\login.html" />
+    <Content Include="templates\macros\blocks.html" />
+    <Content Include="templates\macros\_misc.html" />
+    <Content Include="templates\funnote\_layout.html" />
+    <Content Include="templates\register.html" />
+    <Content Include="templates\repartee.html" />
+    <Content Include="templates\repartee\_layout.html" />
+    <Content Include="templates\search.html" />
+    <Content Include="templates\uprofile.html" />
+    <Content Include="translations\zh_CN\LC_MESSAGES\messages.po" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="models" />
+    <Folder Include="forms\" />
+    <Folder Include="static\pagedown\" />
+    <Folder Include="static\pagedown\demo\" />
+    <Folder Include="static\pagedown\demo\browser\" />
+    <Folder Include="static\pagedown\demo\node\" />
+    <Folder Include="static\pagedown\resources\" />
+    <Folder Include="templates\ads\" />
+    <Folder Include="translations\zh_CN\" />
+    <Folder Include="translations\zh_CN\LC_MESSAGES\" />
+    <Folder Include="utils\" />
+    <Folder Include="static\img\" />
+    <Folder Include="static\js\google-code-prettify\" />
+    <Folder Include="templates\funnote" />
+    <Folder Include="templates\repartee\" />
+    <Folder Include="translations\" />
+    <Folder Include="static\css\" />
+    <Folder Include="static\js\" />
+    <Folder Include="templates\macros\" />
+    <Folder Include="translations\zh\" />
+    <Folder Include="views\" />
+    <Folder Include="templates\" />
+    <Folder Include="static\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>
