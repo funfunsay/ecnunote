@@ -47,11 +47,9 @@
     <Compile Include="utils\modt2i.py" />
     <Compile Include="utils\provider.py" />
     <Compile Include="utils\__init__.py" />
-    <Compile Include="views\ads.py" />
     <Compile Include="views\funnote.py" />
     <Compile Include="views\homesite.py" />
     <Compile Include="views\pagination.py" />
-    <Compile Include="views\weibo.py" />
     <Compile Include="views\__init__.py" />
     <Compile Include="__init__.py" />
   </ItemGroup>
