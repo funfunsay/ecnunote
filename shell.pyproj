@@ -24,8 +24,6 @@
   <ItemGroup>
     <Compile Include="setup.py" />
     <Compile Include="shell.py" />
-    <Compile Include="update_trial05_db.py" />
-    <Compile Include="update_trial03_db.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="dist\http\httpd.conf" />

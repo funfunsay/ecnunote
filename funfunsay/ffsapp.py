@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+this is the main app entry.
+"""
 from __future__ import with_statement
 
 #import pygame
