@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# Fun2say
+# Dbapi
 # Copyright 2012 Brent Jiang
 # See LICENSE for details.
 
-from fun2say.models import ModelFactory
-from fun2say.utils import import_simplejson
-from fun2say.error import Fun2sayError
+from dbapi.models import ModelFactory
+from dbapi.utils import import_simplejson
+from dbapi.error import DbapiError
 import sys
 
 class Parser(object):
@@ -54,7 +54,7 @@ class JSONParser(Parser):
         try:
             json = self.json_lib.loads(payload)
         except Exception, e:
-            raise Fun2sayError('Failed to parse JSON payload: %s' % e)
+            raise DbapiError('Failed to parse JSON payload: %s' % e)
 
         needsCursors = method.parameters.has_key('cursor')
         if needsCursors and isinstance(json, dict) and 'previous_cursor' in json and 'next_cursor' in json:
@@ -80,14 +80,14 @@ class ModelParser(JSONParser):
     def execute(self, method):
         """generate mongodb requests and returns model objects
 
-        This function is a combination of Fun2say's http-request and parse().
+        This function is a combination of Dbapi's http-request and parse().
         """
         method.api.clear()
         try:
             if method.payload_type is None: return
             model = getattr(self.model_factory, method.payload_type)
         except AttributeError:
-            raise Fun2sayError('No model for this payload type: %s' % method.payload_type)
+            raise DbapiError('No model for this payload type: %s' % method.payload_type)
 
         #@todo critical!: how to avoid dumps+loads while still remain
         #invoking parse()?
@@ -101,7 +101,7 @@ class ModelParser(JSONParser):
             if method.payload_type is None: return
             model = getattr(self.model_factory, method.payload_type)
         except AttributeError:
-            raise Fun2sayError('No model for this payload type: %s' % method.payload_type)
+            raise DbapiError('No model for this payload type: %s' % method.payload_type)
 
         json = JSONParser.parse(self, method, payload)
         if isinstance(json, tuple):

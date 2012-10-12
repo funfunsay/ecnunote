@@ -1,8 +1,8 @@
-# Fun2say
+# Dbapi
 # Copyright 2012 Brent Jiang
 # See LICENSE for details.
 
-from fun2say.error import Fun2sayError
+from dbapi.error import DbapiError
 
 class Cursor(object):
     """Pagination helper class"""
@@ -14,7 +14,7 @@ class Cursor(object):
             else:
                 self.iterator = PageIterator(method, args, kargs)
         else:
-            raise Fun2sayError('This method does not perform pagination')
+            raise DbapiError('This method does not perform pagination')
 
     def pages(self, limit=0):
         """Return iterator for pages"""
@@ -67,7 +67,7 @@ class CursorIterator(BaseIterator):
 
     def prev(self):
         if self.prev_cursor == 0:
-            raise Fun2sayError('Can not page back more, at first page')
+            raise DbapiError('Can not page back more, at first page')
         data, self.next_cursor, self.prev_cursor = self.method(
                 cursor=self.prev_cursor, *self.args, **self.kargs
         )
@@ -89,7 +89,7 @@ class PageIterator(BaseIterator):
 
     def prev(self):
         if (self.current_page == 1):
-            raise Fun2sayError('Can not page back more, at first page')
+            raise DbapiError('Can not page back more, at first page')
         self.current_page -= 1
         return self.method(page=self.current_page, *self.args, **self.kargs)
 
@@ -115,13 +115,13 @@ class ItemIterator(BaseIterator):
 
     def prev(self):
         if self.current_page is None:
-            raise Fun2sayError('Can not go back more, at first page')
+            raise DbapiError('Can not go back more, at first page')
         if self.page_index == 0:
             # At the beginning of the current page, move to next...
             self.current_page = self.page_iterator.prev()
             self.page_index = len(self.current_page)
             if self.page_index == 0:
-                raise Fun2sayError('No more items')
+                raise DbapiError('No more items')
         self.page_index -= 1
         self.count -= 1
         return self.current_page[self.page_index]

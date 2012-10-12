@@ -18,7 +18,6 @@ from funfunsay.forms import (SignupForm, LoginForm, RecoverPasswordForm,
 
 from funfunsay.models import User
 from funfunsay.extensions import cache
-from funfunsay.extensions import fun2say
 from funfunsay.views.pagination import Pagination
 import markdown2
 
@@ -40,14 +39,14 @@ def index(page):
     activethreadid = request.args.get('activethreadid', "")
     activepaperid = request.args.get('activepaperid', "")
 
-    messageCount = fun2say.api.count_notes(author_id=current_user.id,
+    messageCount = current_app.dbapi.count_notes(author_id=current_user.id,
         shared_only=False, host_id=None, thread_id=activethreadid)
 
-    messages = fun2say.api.user_timeline(author_id=current_user.id,
+    messages = current_app.dbapi.user_timeline(author_id=current_user.id,
         shared_only=False, page=page, thread_id=activethreadid)
 
-    threads = fun2say.api.note_threads(author_id=current_user.id)
-    papers = fun2say.api.get_papers(author_id=current_user.id)
+    threads = current_app.dbapi.note_threads(author_id=current_user.id)
+    papers = current_app.dbapi.get_papers(author_id=current_user.id)
 
     pagination = Pagination(page, 20, messageCount)
 
@@ -66,8 +65,8 @@ def index(page):
 @login_required
 def fastnote():
 
-    threads = fun2say.api.note_threads(author_id=current_user.id)
-    papers = fun2say.api.get_papers(author_id=current_user.id)
+    threads = current_app.dbapi.note_threads(author_id=current_user.id)
+    papers = current_app.dbapi.get_papers(author_id=current_user.id)
     return render_template('funnote/fastnote.html',
         threads=threads, 
         papers=papers
@@ -95,13 +94,13 @@ def paper():
     # activpaperid is the id of paper
     activepaperid = request.args.get('activepaperid', '')
 
-    messages = fun2say.api.user_timeline(shared_only=False, 
+    messages = current_app.dbapi.user_timeline(shared_only=False, 
         paper_id=activepaperid, sort='order_in_paper', per_page = 99999,
         direction='ascending')
 
-    threads = fun2say.api.note_threads(author_id=current_user.id)
-    userpapers = fun2say.api.get_papers(author_id=current_user.id)
-    currentpaper = fun2say.api.get_papers(paper_id=activepaperid)[0]
+    threads = current_app.dbapi.note_threads(author_id=current_user.id)
+    userpapers = current_app.dbapi.get_papers(author_id=current_user.id)
+    currentpaper = current_app.dbapi.get_papers(paper_id=activepaperid)[0]
 
     #print create
     return render_template('funnote/paper.html',
@@ -119,12 +118,12 @@ def paper():
 def message_page(messageid):
     #print messageid
 
-    threads = fun2say.api.note_threads(author_id=current_user.id)
-    papers = fun2say.api.get_papers(author_id=current_user.id)
+    threads = current_app.dbapi.note_threads(author_id=current_user.id)
+    papers = current_app.dbapi.get_papers(author_id=current_user.id)
 
     return render_template('funnote/message.html', 
-        message=fun2say.api.get_one_note(id=messageid), 
-        comments=fun2say.api.user_timeline(
+        message=current_app.dbapi.get_one_note(id=messageid), 
+        comments=current_app.dbapi.user_timeline(
             host_id=messageid,shared_only=True),
         threads=threads,
         papers=papers,
@@ -147,7 +146,7 @@ def save_message():
     if source and source <> '':
         if messageid is None or messageid.strip()== '':
             ## add new message
-            newmessage = fun2say.api.add_note(
+            newmessage = current_app.dbapi.add_note(
                 author_id=current_user.id, source=source,
                 thread_id=activethreadid, 
                 paper_id=activepaperid)
@@ -161,7 +160,7 @@ def save_message():
                 )
             ##print "notes:", notes
         else:
-            fun2say.api.update_note(
+            current_app.dbapi.update_note(
                 id=messageid, source=source)
 
     #return redirect(url_for('funnote.index', 
@@ -188,7 +187,7 @@ def save_message():
 def delete_message():
     activethreadid = request.args.get('activethreadid', '')
     activepaperid = request.args.get('activepaperid', '')
-    fun2say.api.delete_note(request.form['messageid'])
+    current_app.dbapi.delete_note(request.form['messageid'])
     if activepaperid!= '':
         return jsonify(redirect = url_for('funnote.paper', 
             activethreadid=activethreadid,
@@ -212,12 +211,12 @@ def save_comment():
 
     if text and text <> '':
         if commentid is None or commentid.strip()== '':
-            fun2say.api.add_note(host_id=messageid, 
+            current_app.dbapi.add_note(host_id=messageid, 
                 author_id=current_user.id, source=text, 
                 shared=True ## comment default shared
                 )
         else:
-            fun2say.api.update_note(id=commentid, source=text)
+            current_app.dbapi.update_note(id=commentid, source=text)
 
     return redirect(url_for('funnote.message_page', 
         messageid=messageid, 
@@ -228,7 +227,7 @@ def save_comment():
 @login_required
 def delete_comment():
     commentid = request.form['commentid']
-    note = fun2say.api.delete_note(id=commentid)
+    note = current_app.dbapi.delete_note(id=commentid)
     return jsonify(redirect = url_for('funnote.message_page', 
         messageid=note.host_id))
 
@@ -242,9 +241,9 @@ def add_thread():
     if name=="":
         return jsonify(status=False)
     #print "name = %s, activethreadid=%s" %(name, activethreadid)
-    thread = fun2say.api.add_thread(author_id=current_user.id, name=name)
-    if not fun2say.api.success:
-        #print fun2say.api.error
+    thread = current_app.dbapi.add_thread(author_id=current_user.id, name=name)
+    if not current_app.dbapi.success:
+        #print current_app.dbapi.error
         return jsonify(status=False)
     #return jsonify(threadid=thread.id, threadname=thread.name, threadshared=thread.shared)
     return jsonify(status=True, 
@@ -258,7 +257,7 @@ def add_thread():
 def rename_thread():
     threadid = request.form['threadid']
     name = request.form['name']
-    fun2say.api.update_thread(id=threadid, name=name)
+    current_app.dbapi.update_thread(id=threadid, name=name)
     return jsonify(status=True)
 
 
@@ -270,7 +269,7 @@ def set_threads():
     activethreadid = request.form['activethreadid']
     #print messageid
     threads = request.form['threads']
-    fun2say.api.set_threads(id=messageid, threads=threads)
+    current_app.dbapi.set_threads(id=messageid, threads=threads)
     if activethreadid != '' and threads.find(activethreadid)==-1:
         #doesn't belong to this thread anymore
         return jsonify(status=True,
@@ -287,9 +286,9 @@ def modal_threads():
     #messageid = request.form['messageid']
     messageid = request.args.get('messageid')
     #print messageid
-    message=fun2say.api.get_one_note(id=messageid)
+    message=current_app.dbapi.get_one_note(id=messageid)
     #print message.threads
-    threads = fun2say.api.note_threads(author_id=current_user.id)
+    threads = current_app.dbapi.note_threads(author_id=current_user.id)
 
     return jsonify(status=True, 
         html=render_template('funnote/modal_threads.html', 
@@ -305,9 +304,9 @@ def add_paper():
         ## @faq: can it return nothing when name==""?
         return jsonify(status=False)
     #print "name = %s, activepaperid=%s" %(name, activepaperid)
-    paper = fun2say.api.add_paper(author_id=current_user.id, name=name)
-    if not fun2say.api.success:
-        #print fun2say.api.error
+    paper = current_app.dbapi.add_paper(author_id=current_user.id, name=name)
+    if not current_app.dbapi.success:
+        #print current_app.dbapi.error
         return jsonify(status=False)
     #return jsonify(paperid=paper.id, papername=paper.name, papershared=paper.shared)
     return jsonify(status=True, 
@@ -321,7 +320,7 @@ def add_paper():
 def rename_paper():
     paperid = request.form['paperid']
     name = request.form['name']
-    fun2say.api.update_paper(id=paperid, name=name)
+    current_app.dbapi.update_paper(id=paperid, name=name)
     return jsonify(status=True)
 
 
@@ -329,7 +328,7 @@ def rename_paper():
 @login_required
 def delete_paper():
     paperid = request.form['paperid']
-    fun2say.api.delete_paper(id=paperid)
+    current_app.dbapi.delete_paper(id=paperid)
     return jsonify(redirect=url_for('funnote.index'))
 
 
@@ -337,7 +336,7 @@ def delete_paper():
 @login_required
 def delete_thread():
     threadid = request.form['threadid']
-    fun2say.api.delete_thread(id=threadid)
+    current_app.dbapi.delete_thread(id=threadid)
     return jsonify(redirect=url_for('funnote.index'))
 
 
@@ -349,7 +348,7 @@ def set_papers():
     activethreadid = request.form['activethreadid']
     #print messageid
     papers = request.form['papers']
-    fun2say.api.set_papers(id=messageid, papers=papers)
+    current_app.dbapi.set_papers(id=messageid, papers=papers)
     #print "activepaperid:", activepaperid
     #print "papers:", papers
     if activepaperid != '' and papers.find(activepaperid)==-1:
@@ -368,9 +367,9 @@ def modal_papers():
     #messageid = request.form['messageid']
     messageid = request.args.get('messageid')
     #print messageid
-    message=fun2say.api.get_one_note(id=messageid)
+    message=current_app.dbapi.get_one_note(id=messageid)
     #print message.papers
-    papers = fun2say.api.get_papers(author_id=current_user.id)
+    papers = current_app.dbapi.get_papers(author_id=current_user.id)
 
     return jsonify(status=True, 
         html=render_template('funnote/modal_papers.html', 
@@ -380,7 +379,7 @@ def modal_papers():
 @funnote.route('/change_order', methods=['POST'])
 @login_required
 def change_order():
-    fun2say.api.change_order(id=request.form['id'], 
+    current_app.dbapi.change_order(id=request.form['id'], 
         start_pos=request.form['start_pos'], 
         stop_pos=request.form['stop_pos'],
         author_id=current_user.id)
@@ -391,9 +390,9 @@ def change_order():
 @funnote.route('/shared_paper')
 def shared_paper():
     paperId = request.args.get('id')
-    messages = fun2say.api.user_timeline(shared_only=True, paper_id=paperId,
+    messages = current_app.dbapi.user_timeline(shared_only=True, paper_id=paperId,
         sort='order_in_paper', direction='ascending')
-    papers = fun2say.api.get_papers(paper_id=paperId)
+    papers = current_app.dbapi.get_papers(paper_id=paperId)
     #print papers[0]
     return render_template('funnote/shared_paper.html', paper=papers[0], messages=messages)
 
@@ -402,7 +401,7 @@ def shared_paper():
 def share_note_switch():
     noteId = request.form['id']
     shared = True if request.form['shared']=="true" else False
-    note = fun2say.api.update_note(shared=shared, id=noteId)
+    note = current_app.dbapi.update_note(shared=shared, id=noteId)
     return jsonify(status = True if note.shared==shared else False)
 
 
@@ -410,7 +409,7 @@ def share_note_switch():
 def share_paper_switch():
     paperId = request.form['id']
     shared = True if request.form['shared']=="true" else False
-    paper = fun2say.api.update_paper(shared=shared, id=paperId)
+    paper = current_app.dbapi.update_paper(shared=shared, id=paperId)
     return jsonify(status = True if paper.shared==shared else False)
 
 
@@ -418,7 +417,7 @@ def share_paper_switch():
 @login_required
 def take_in_note(id):
     #print id, ",", current_user.is_authenticated()
-    note = fun2say.api.take_in_note(id=id, user_id=current_user.id)
+    note = current_app.dbapi.take_in_note(id=id, user_id=current_user.id)
     status=True if note.author_id==current_user.id else False
     #flash("Note %s taked in." % note.id)
     return jsonify(status=status)
@@ -431,7 +430,7 @@ def get_markdown():
     if not noteid:
         return jsonify(status=False)
 
-    note = fun2say.api.get_one_note(id=noteid)
+    note = current_app.dbapi.get_one_note(id=noteid)
     return jsonify(status=True,
         content=markdown2.markdown(note.source) )
 
@@ -441,7 +440,7 @@ def get_original():
     if not noteid:
         return jsonify(status=False)
 
-    note = fun2say.api.get_one_note(id=noteid)
+    note = current_app.dbapi.get_one_note(id=noteid)
     return jsonify(status=True,
         content=note.source )
 
@@ -466,7 +465,7 @@ def fetch_notes():
     loadScript = True if lastIds=="" else False
 
     #print "number:", number, ", lastIds:", lastIds, ", threadid:", threadid, ", paperid:", paperid, ", tags:", tags
-    notes = fun2say.api.user_timeline(author_id=authorid,
+    notes = current_app.dbapi.user_timeline(author_id=authorid,
         shared_only=sharedonly, lastIds=lastIds, per_page=number,
         paper_id=paperid, thread_id=threadid, tags=tags,
         sort=sort, direction=direction, criteria=criteria)
@@ -474,7 +473,7 @@ def fetch_notes():
 
     paper = None
     if paperid != '':
-        paper = fun2say.api.get_papers(paper_id=paperid)[0]
+        paper = current_app.dbapi.get_papers(paper_id=paperid)[0]
 
 
     if len(notes)==0:

@@ -18,9 +18,12 @@ from flask.ext.login import (login_required, login_user, current_user,
                             login_fresh)
 
 from funfunsay.models import User
-from funfunsay.extensions import cache, fun2say
+from funfunsay.extensions import cache
 from funfunsay.config import DefaultConfig, APP_NAME
-from funfunsay.utils.provider import get_user_info
+import pymongo
+from pymongo import Connection
+connection = Connection()
+myappdb = connection['ffsdb']
 
 
 homesite = Blueprint('homesite', __name__
@@ -85,7 +88,7 @@ def register():
         user = User()
         form.populate_obj(user)
 
-        userDoc = fun2say.api.update_user_profile(user_id=form.name.data,
+        userDoc = current_app.dbapi.update_user_profile(user_id=form.name.data,
             name=form.name.data, email=form.email.data, 
             new_pw_hash=generate_password_hash(form.password.data),
             invitation_code=form.invitation_code.data,
@@ -100,7 +103,7 @@ def register():
         #print "You were successfully registered and can login now"
 
         if login_user(user):
-           fun2say.api.add_note(author_id=current_user.id, source=default_note_source)
+           current_app.dbapi.add_note(author_id=current_user.id, source=default_note_source)
            return redirect(form.next.data or url_for('funnote.fastnote'))
             #return redirect( url_for('funnote.index') )
     else:
@@ -126,9 +129,9 @@ def search():
 def user_profile():
     invitation_code = request.args.get('invitation_code', '')
     #print invitation_code
-    invitates = g.db.invitates.find({"author_id":current_user.id})
+    invitates = myappdb.invitates.find({"author_id":current_user.id})
     return render_template('uprofile.html', 
-        user = fun2say.api.get_user_profile(id=current_user.id),
+        user = current_app.dbapi.get_user_profile(id=current_user.id),
         invitation_code=invitation_code, invitates=invitates)
 
 
@@ -137,12 +140,12 @@ def user_profile():
 def unlink_provider():
     invitation_code = request.args.get('invitation_code', '')
     #print invitation_code
-    invitates = g.db.invitates.find({"author_id":current_user.id})
+    invitates = myappdb.invitates.find({"author_id":current_user.id})
     user_id_provider = request.args.get('user_id_provider')
     user_id = current_user.id
     provider = request.args.get('provider')
 
-    user = fun2say.api.remove_provider(user_id=user_id, 
+    user = current_app.dbapi.remove_provider(user_id=user_id, 
         user_id_provider=user_id_provider, 
         provider=provider)
 
@@ -162,7 +165,7 @@ def generate_invitation_code():
     code = hex(int(str(cur_time)[::-1]) + random.randint(1, 100))[2:10]
     #print code
     code_doc = User.new_invitation_code_document(current_user.id, code)
-    g.db.invitates.insert(code_doc)
+    myappdb.invitates.insert(code_doc)
 
     return redirect(url_for('homesite.user_profile', invitation_code=code))
 

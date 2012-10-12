@@ -1,9 +1,9 @@
-# Fun2say
+# Dbapi
 # Copyright 2012 Brent Jiang
 # See LICENSE for details.
 
-class Fun2sayError(Exception):
-    """Fun2say exception"""
+class DbapiError(Exception):
+    """Dbapi exception"""
 
     def __init__(self, reason, response=None):
         self.reason = unicode(reason)

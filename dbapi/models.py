@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-# Fun2say
+# Dbapi
 # Copyright 2012 Brent Jiang
 # See LICENSE for details.
 
@@ -11,14 +11,18 @@
 # - add html escape/unescape 
 
 import pymongo
+from pymongo import Connection
 from pymongo.objectid import ObjectId
 import time
 import sys
-from fun2say.error import Fun2sayError
-from fun2say.utils import parse_datetime, parse_html_value, parse_a_href, \
+from dbapi.error import DbapiError
+from dbapi.utils import parse_datetime, parse_html_value, parse_a_href, \
         parse_search_datetime, unescape_html
-from fun2say.utils.escape import (xhtml_escape, 
+from dbapi.utils.escape import (xhtml_escape, 
     xhtml_unescape, json_decode, json_encode)
+
+connection = Connection()
+myappdb = connection['ffsdb']
 
 ## test for not unescape
 def source_unescape(str):
@@ -27,7 +31,7 @@ def source_escape(str):
     return str
 
 class ResultSet(list):
-    """A list like object that holds results from a Flask-Fun2say API query."""
+    """A list like object that holds results from a Flask-Dbapi API query."""
 
 
 class Model(object):
@@ -149,11 +153,11 @@ class Note(Model):
 
         authorId = parameters.get('author_id', "")
         if authorId=="":
-            raise Fun2sayError("Must specify 'author_id' to add_note!")
+            raise DbapiError("Must specify 'author_id' to add_note!")
 
         source = parameters.get('source', "")
         if source=="":
-            raise Fun2sayError("Must specify 'source' to add_note!")
+            raise DbapiError("Must specify 'source' to add_note!")
 
         shared = True if parameters.get('shared', "False")=="True" else False
 
@@ -169,7 +173,7 @@ class Note(Model):
         #print paperId
         paperDoc=None
         if paperId!="":
-            paperDoc = api.db.papers.find_one({"_id":ObjectId(paperId)})
+            paperDoc = myappdb.papers.find_one({"_id":ObjectId(paperId)})
 
         doc = {"author_id":authorId, 
             "text":source_escape(source),
@@ -192,12 +196,12 @@ class Note(Model):
             "user_id_provider": userIdProvider,
             }
 
-        ids = api.db.messages.insert(doc)
+        ids = myappdb.messages.insert(doc)
         if paperId!="":
-            paperDoc = api.db.papers.find_one({"_id":ObjectId(paperId)})
+            paperDoc = myappdb.papers.find_one({"_id":ObjectId(paperId)})
             paperDoc["notes"].append({"id":str(ids), "order":len(paperDoc["notes"])+1})
             paperDoc["modified_date"] = pubDate
-            api.db.papers.save(paperDoc)
+            myappdb.papers.save(paperDoc)
 
         doc["_id"] = ids
 
@@ -209,11 +213,11 @@ class Note(Model):
         #print "note update: parameters:", parameters
         noteId = parameters.get("id", "")
         if noteId=="":
-            raise Fun2sayError("Note ID must provided for update!")
+            raise DbapiError("Note ID must provided for update!")
 
-        doc = api.db.messages.find_one({"_id":ObjectId(noteId)})
+        doc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
         if doc == None:
-            raise Fun2sayError("Cannot find the note to be updated!")
+            raise DbapiError("Cannot find the note to be updated!")
 
         shared = parameters.get('shared', None)
         #print "shared:", shared
@@ -227,7 +231,7 @@ class Note(Model):
             doc["text"] = source_escape(source)
         doc["host_id"] = parameters.get("host_id", doc["host_id"])
 
-        status = api.db.messages.update({"_id":ObjectId(noteId)},
+        status = myappdb.messages.update({"_id":ObjectId(noteId)},
                                         doc, upsert=False, safe=True)
 
         return cls._gen_model(doc)
@@ -236,9 +240,9 @@ class Note(Model):
     @classmethod
     def attach_note_to_paper(cls, api, paperid, noteid):
         #print "attach_note_to_paper ", noteid
-        paperDoc = api.db.papers.find_one({"_id": ObjectId(paperid)})
+        paperDoc = myappdb.papers.find_one({"_id": ObjectId(paperid)})
         if paperDoc == None:
-            #raise Fun2sayError("Cannot find the paper to be updated!")
+            #raise DbapiError("Cannot find the paper to be updated!")
             #don't raise error: maybe ...
             return
 
@@ -250,9 +254,9 @@ class Note(Model):
         
         order = len(paperDoc['notes'])+1
         paperDoc["modified_date"] = int(time.time())
-        api.db.papers.update({"_id":ObjectId(paperid)},
+        myappdb.papers.update({"_id":ObjectId(paperid)},
             paperDoc, upsert=False, safe=True)
-        api.db.papers.update({"_id":ObjectId(paperid)},
+        myappdb.papers.update({"_id":ObjectId(paperid)},
             {'$push':{'notes': {'id':noteid, 'order':order} }})
 
         return order
@@ -261,9 +265,9 @@ class Note(Model):
     @classmethod
     def detach_note_from_paper(cls, api, paperid, noteid):
         #print "detach_note_from_paper ", noteid
-        paperDoc = api.db.papers.find_one({"_id": ObjectId(paperid)})
+        paperDoc = myappdb.papers.find_one({"_id": ObjectId(paperid)})
         if paperDoc == None:
-            #raise Fun2sayError("Cannot find the paper to be updated!")
+            #raise DbapiError("Cannot find the paper to be updated!")
             # don't raise error: maybe the paper has been deleted!
             return
 
@@ -275,7 +279,7 @@ class Note(Model):
         for note in paperDoc['notes']:
             if note['order']>notePos:
                 note['order'] -= 1
-                api.db.messages.update(
+                myappdb.messages.update(
                     {'_id':ObjectId(note['id']), "papers":{"$elemMatch":{"id":paperid }}},
                     {'$inc':{"papers.$.order":-1}}
                     )
@@ -283,10 +287,10 @@ class Note(Model):
         #paperDoc['notes'][:] = [d for d in paperDoc['notes'] if d.get('id') != noteid]
         # update orders first
         paperDoc["modified_date"] = int(time.time())
-        api.db.papers.update({"_id":ObjectId(paperid)},
+        myappdb.papers.update({"_id":ObjectId(paperid)},
             paperDoc, upsert=False, safe=True)
         # then pull
-        api.db.papers.update({"_id":ObjectId(paperid)},
+        myappdb.papers.update({"_id":ObjectId(paperid)},
             {'$pull':{"notes": {"id":noteid }}})
 
 
@@ -296,13 +300,13 @@ class Note(Model):
         #print "note set_papers: parameters:", parameters
         noteId = parameters.get("id", "")
         if noteId=="":
-            raise Fun2sayError("set note papers: note id must provide!")
-        doc = api.db.messages.find_one({"_id":ObjectId(noteId)})
+            raise DbapiError("set note papers: note id must provide!")
+        doc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
         if doc == None:
-            raise Fun2sayError("Cannot find the note to be updated!")
+            raise DbapiError("Cannot find the note to be updated!")
 
         # must do detach before attach!
-        oldPapers = api.db.papers.find({"notes": {"$elemMatch":{"id":noteId }}})
+        oldPapers = myappdb.papers.find({"notes": {"$elemMatch":{"id":noteId }}})
         for old in oldPapers:
             oldPaperId = str(old['_id'])
             if not oldPaperId  in oldPapers:
@@ -318,7 +322,7 @@ class Note(Model):
             if order!=None:
                 doc["papers"].append({'id':paperId, 'order':order})
 
-        status = api.db.messages.update({"_id":ObjectId(noteId)},
+        status = myappdb.messages.update({"_id":ObjectId(noteId)},
                                         doc, upsert=False, safe=True)
 
         return cls._gen_model(doc)
@@ -330,17 +334,17 @@ class Note(Model):
         #print "note set_threads: parameters:", parameters
         noteId = parameters.get("id", "")
         if noteId=="":
-            raise Fun2sayError("set note threads: note id must provide!")
+            raise DbapiError("set note threads: note id must provide!")
 
-        doc = api.db.messages.find_one({"_id":ObjectId(noteId)})
+        doc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
         if doc == None:
-            raise Fun2sayError("Cannot find the note to be updated!")
+            raise DbapiError("Cannot find the note to be updated!")
 
         doc["threads"] = []
         for thread in parameters["threads"].split('&'):
             doc["threads"].append({'id':thread})
 
-        status = api.db.messages.update({"_id":ObjectId(noteId)},
+        status = myappdb.messages.update({"_id":ObjectId(noteId)},
             doc, upsert=False, safe=True)
 
         return cls._gen_model(doc)
@@ -352,17 +356,17 @@ class Note(Model):
         #print "note remove: parameters:", parameters
         noteId = parameters.get("id", "")
         if noteId=="":
-            raise Fun2sayError("remove note: note id must provide!")
+            raise DbapiError("remove note: note id must provide!")
 
-        noteDoc = api.db.messages.find_one({"_id":ObjectId(noteId)})
+        noteDoc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
         if noteDoc == None:
-            raise Fun2sayError("Cannot find the note to be removed!")
+            raise DbapiError("Cannot find the note to be removed!")
  
         ##remove note from all papers
         for paper in noteDoc["papers"]:
             cls.detach_note_from_paper(api, paper["id"], noteId)
        
-        status = api.db.messages.remove({"_id":ObjectId(noteId)})
+        status = myappdb.messages.remove({"_id":ObjectId(noteId)})
 
         return cls._gen_model(noteDoc)
 
@@ -374,18 +378,18 @@ class Note(Model):
         """
         noteId = parameters.get("id", "")
         if noteId=="":
-            raise Fun2sayError("take in ntoe: note id must provided!")
+            raise DbapiError("take in ntoe: note id must provided!")
 
         userId = parameters.get("user_id", "")
         if userId=="":
-            raise Fun2sayError("user id must provided!")
+            raise DbapiError("user id must provided!")
 
-        noteDoc = api.db.messages.find_one({"take_in_id":noteId, "author_id":userId})
+        noteDoc = myappdb.messages.find_one({"take_in_id":noteId, "author_id":userId})
         if noteDoc == None:
-            noteDoc = api.db.messages.find_one({"_id":ObjectId(noteId)})
+            noteDoc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
             if noteDoc == None:
                 ## @todo: how if the user take in just when the author delete it??
-                raise Fun2sayError("Cannot find the note to be taken in!")
+                raise DbapiError("Cannot find the note to be taken in!")
 
             if userId != str(noteDoc["author_id"]):
                 noteDoc["author_id"] = userId
@@ -397,18 +401,18 @@ class Note(Model):
                 noteDoc['papers'] = []
                 noteDoc['host_id'] = None
                 noteDoc['shared'] = False
-                api.db.messages.save(noteDoc)
+                myappdb.messages.save(noteDoc)
         #@todo: if user modified taken-in note, how?
         # so wont support it now! maybe later!
         #@fixed: now take-in notes are not allowed to be modified.
         # so just let user update the note when take-in again
         else:
             ## has taken, so update the content!
-            updatedNoteDoc = api.db.messages.find_one({"_id":ObjectId(noteId)})
+            updatedNoteDoc = myappdb.messages.find_one({"_id":ObjectId(noteId)})
             if userId != str(updatedNoteDoc["author_id"]):
                 noteDoc["text"] = updatedNoteDoc["text"]
                 noteDoc["modified_date"] = updatedNoteDoc["modified_date"]
-                api.db.messages.save(noteDoc)
+                myappdb.messages.save(noteDoc)
 
         return cls._gen_model(noteDoc)
     
@@ -420,9 +424,9 @@ class Note(Model):
         This function is a combination of database query and self.parse()
         """
         #print "note query: parameters:", parameters
-        noteDoc = api.db.messages.find_one({"_id":ObjectId(id)})
+        noteDoc = myappdb.messages.find_one({"_id":ObjectId(id)})
         if noteDoc==None:
-            raise Fun2sayError("Query one note failed on id %s"%(id))
+            raise DbapiError("Query one note failed on id %s"%(id))
 
         return cls._gen_model(noteDoc)
 
@@ -439,7 +443,7 @@ class Note(Model):
         ## @fixme: now, shared/unshared-order-problem seems note exists 
         ##  here! but if shared_only, each time it may not return all 'perPage'
         ## notes
-        noteDocs = api.db.messages.find({"papers": {"$elemMatch":{"id":paperId}}})
+        noteDocs = myappdb.messages.find({"papers": {"$elemMatch":{"id":paperId}}})
         sortedDocs = [0] * perPage
         index = 0
         if direction==pymongo.ASCENDING:
@@ -518,7 +522,7 @@ class Note(Model):
         paperId = parameters.get('paper_id', "")
         if paperId != "":
             if threadId != "":
-                raise Fun2sayError("note query error: both paperId and threadId specified! ")
+                raise DbapiError("note query error: both paperId and threadId specified! ")
             spec["papers"] = {"$elemMatch":{"id":paperId }}
 
         tags = parameters.get('tags', "")
@@ -551,12 +555,12 @@ class Note(Model):
             if sort=='papers.$.order':
                 noteDocs = cls._notes_in_paper_order(api, paperId, perPage, (page-1)*perPage, shared_only, direction)
             else:
-                noteDocs = api.db.messages.find(spec, 
+                noteDocs = myappdb.messages.find(spec, 
                     sort=[(sort, direction)]).skip((page-1)*perPage).limit(perPage)
         else:
-            lastDoc = api.db.messages.find_one({"_id":ObjectId(lastIds)})
+            lastDoc = myappdb.messages.find_one({"_id":ObjectId(lastIds)})
             if lastDoc == None:
-                raise Fun2sayError("note query: last ids invalid!")
+                raise DbapiError("note query: last ids invalid!")
 
             if sort=='papers.$.order':
                 skip = 0
@@ -567,7 +571,7 @@ class Note(Model):
                 noteDocs = cls._notes_in_paper_order(api, paperId, perPage, skip, shared_only, direction)
             else:
                 spec[sort]= {"$lt" if direction==pymongo.DESCENDING else "$gt": lastDoc[sort]}
-                noteDocs = api.db.messages.find(spec, 
+                noteDocs = myappdb.messages.find(spec, 
                     sort=[(sort, direction)]).limit(perPage)
 
         for noteDoc in noteDocs:
@@ -625,19 +629,19 @@ class Thread(Model):
         #print "thread add: parameters:", parameters
         authorId = parameters.get("author_id", "")
         if authorId=="":
-            raise Fun2sayError("Author ID doesn't provided for add thread")
+            raise DbapiError("Author ID doesn't provided for add thread")
         name = parameters.get("name", "")
         if name=="":
-            raise Fun2sayError("Thread name doesn't provided for add thread")
+            raise DbapiError("Thread name doesn't provided for add thread")
         shared = parameters.get("shared", False)
 
-        threadDoc = api.db.threads.find_one({"author_id":authorId, "name":name})
+        threadDoc = myappdb.threads.find_one({"author_id":authorId, "name":name})
         if threadDoc == None:
             threadDoc = {}
             threadDoc["author_id"] = authorId
             threadDoc["name"] = name
             threadDoc["shared"] = shared
-            threadDoc["_id"] = ObjectId(api.db.threads.insert(threadDoc))
+            threadDoc["_id"] = ObjectId(myappdb.threads.insert(threadDoc))
         else:
             api.success = False
             api.error = "db: the same name exists in the threads collection"
@@ -655,19 +659,19 @@ class Thread(Model):
         #print "thread update: parameters:", parameters
         threadId = parameters.get("id", "")
         if threadId=="":
-            raise Fun2sayError("Thread ID doesn't provided for update thread")
+            raise DbapiError("Thread ID doesn't provided for update thread")
         name = parameters.get("name", "")
         shared = parameters.get("shared", None) #it's 'None'! not default 'False'
 
-        threadDoc = api.db.threads.find_one({"_id":ObjectId(threadId)})
+        threadDoc = myappdb.threads.find_one({"_id":ObjectId(threadId)})
         if threadDoc == None:
-            raise Fun2sayError("Thread with id %s doesn't exists" % threadId)
+            raise DbapiError("Thread with id %s doesn't exists" % threadId)
 
         if name!= "":
             threadDoc["name"] = name
         if shared!= None:
             threadDoc["shared"] = shared
-        api.db.threads.update({"_id":ObjectId(threadId)}, 
+        myappdb.threads.update({"_id":ObjectId(threadId)}, 
             threadDoc, upsert=False, safe=True)
         modelDict = {}
         modelDict['id'] = str(threadDoc["_id"])
@@ -681,12 +685,12 @@ class Thread(Model):
         #print "thread remove: parameters:", parameters
         threadId = parameters.get("id", "")
         if threadId=="":
-            raise Fun2sayError("Thread ID doesn't provided for update thread")
+            raise DbapiError("Thread ID doesn't provided for update thread")
 
-        threadDoc = api.db.threads.find_one({"_id":ObjectId(threadId)})
+        threadDoc = myappdb.threads.find_one({"_id":ObjectId(threadId)})
         if threadDoc == None:
-            raise Fun2sayError("Thread with id %s doesn't exists" % threadId)
-        api.db.threads.remove({"_id":ObjectId(threadId)})
+            raise DbapiError("Thread with id %s doesn't exists" % threadId)
+        myappdb.threads.remove({"_id":ObjectId(threadId)})
         modelDict = {}
         modelDict['id'] = str(threadDoc["_id"])
         modelDict['name'] = threadDoc["name"]
@@ -699,9 +703,9 @@ class Thread(Model):
         #print "thread query: parameters:", parameters
         authorId = parameters.get("author_id", "")
         if authorId=="":
-            raise Fun2sayError("Author ID doesn't provided for query threads")
+            raise DbapiError("Author ID doesn't provided for query threads")
 
-        threadDocs = api.db.threads.find({"author_id":authorId})
+        threadDocs = myappdb.threads.find({"author_id":authorId})
 
         models = []
         for threadDoc in threadDocs:
@@ -732,15 +736,15 @@ class Paper(Model):
         #print "paper add: parameters:", parameters
         authorId = parameters.get("author_id", "")
         if authorId=="":
-            raise Fun2sayError("Author ID doesn't provided for add paper")
+            raise DbapiError("Author ID doesn't provided for add paper")
         name = parameters.get("name", "")
         if name=="":
-            raise Fun2sayError("Paper name doesn't provided for add paper")
+            raise DbapiError("Paper name doesn't provided for add paper")
         shared = parameters.get("shared", None)
         shared = True if shared=="True" else False ## 'None' means "not share"
         curTime = int(time.time())
 
-        paperDoc = api.db.papers.find_one({"author_id":authorId, "name":name})
+        paperDoc = myappdb.papers.find_one({"author_id":authorId, "name":name})
         if paperDoc == None:
             paperDoc = {}
             paperDoc["author_id"] = authorId
@@ -749,7 +753,7 @@ class Paper(Model):
             paperDoc["notes"] = []
             paperDoc["pub_date"] = curTime
             paperDoc["modified_date"] = curTime
-            paperDoc["_id"] = ObjectId(api.db.papers.insert(paperDoc))
+            paperDoc["_id"] = ObjectId(myappdb.papers.insert(paperDoc))
         else:
             api.success = False
             api.error = "db: the same name exists in papers collection."
@@ -771,14 +775,14 @@ class Paper(Model):
         #print "paper update: parameters:", parameters
         paperId = parameters.get("id", "")
         if paperId=="":
-            raise Fun2sayError("Paper ID doesn't provided for update paper")
+            raise DbapiError("Paper ID doesn't provided for update paper")
         name = parameters.get("name", "")
         shared = parameters.get("shared", None) #it's 'None'! not default 'False'
         shared = True if shared=="True" else False ## 'None' means "not share"
 
-        paperDoc = api.db.papers.find_one({"_id":ObjectId(paperId)})
+        paperDoc = myappdb.papers.find_one({"_id":ObjectId(paperId)})
         if paperDoc == None:
-            raise Fun2sayError("Paper with id %s doesn't exists" % paperId)
+            raise DbapiError("Paper with id %s doesn't exists" % paperId)
 
         curTime = int(time.time())
 
@@ -787,7 +791,7 @@ class Paper(Model):
         if shared!= None:
             paperDoc["shared"] = shared
             paperDoc["modified_date"] = curTime
-        api.db.papers.update({"_id":ObjectId(paperId)}, 
+        myappdb.papers.update({"_id":ObjectId(paperId)}, 
             paperDoc, upsert=False, safe=True)
         modelDict = {}
         modelDict['id'] = str(paperDoc["_id"])
@@ -803,12 +807,12 @@ class Paper(Model):
         #print "paper remove: parameters:", parameters
         paperId = parameters.get("id", "")
         if paperId=="":
-            raise Fun2sayError("Paper ID doesn't provided for update paper")
+            raise DbapiError("Paper ID doesn't provided for update paper")
 
-        paperDoc = api.db.papers.find_one({"_id":ObjectId(paperId)})
+        paperDoc = myappdb.papers.find_one({"_id":ObjectId(paperId)})
         if paperDoc == None:
-            raise Fun2sayError("Thread with id %s doesn't exists" % paperId)
-        api.db.papers.remove({"_id":ObjectId(paperId)})
+            raise DbapiError("Thread with id %s doesn't exists" % paperId)
+        myappdb.papers.remove({"_id":ObjectId(paperId)})
         modelDict = {}
         modelDict['id'] = str(paperDoc["_id"])
         modelDict['name'] = paperDoc["name"]
@@ -842,7 +846,7 @@ class Paper(Model):
 
         #print "spec:", spec
 
-        paperDocs = api.db.papers.find(spec, sort=[("modified_date", pymongo.DESCENDING)]).limit(0)
+        paperDocs = myappdb.papers.find(spec, sort=[("modified_date", pymongo.DESCENDING)]).limit(0)
 
         models = []
         for paperDoc in paperDocs:
@@ -864,18 +868,18 @@ class Paper(Model):
     def change_order(cls, api, parameters):
         startPos = parameters.get('start_pos', None)
         if startPos==None:
-            raise Fun2sayError("start_pos doesn't provided for query papers")
+            raise DbapiError("start_pos doesn't provided for query papers")
         startPos = int(startPos)
         stopPos = parameters.get('stop_pos', None)
         if stopPos==None:
-            raise Fun2sayError("stop_pos doesn't provided for query papers")
+            raise DbapiError("stop_pos doesn't provided for query papers")
         stopPos = int(stopPos)
         paperId = parameters.get('id', None)
         if paperId==None:
-            raise Fun2sayError("paper id doesn't provided for query papers")
+            raise DbapiError("paper id doesn't provided for query papers")
         authorId = parameters.get('author_id', None)
         if authorId==None:
-            raise Fun2sayError("Author ID doesn't provided for query papers")
+            raise DbapiError("Author ID doesn't provided for query papers")
 
         max = startPos if startPos > stopPos else stopPos
         min = startPos if startPos < stopPos else stopPos
@@ -889,29 +893,29 @@ class Paper(Model):
         #print _("Position from %d to %d changed, inc %d, min %d, max %d"%(startPos, stopPos, incValue, min, max))
         #flash(_("Position from %d to %d changed"%(startPos, stopPos)))
 
-        paperDoc = api.db.papers.find_one({"_id":ObjectId(paperId),
+        paperDoc = myappdb.papers.find_one({"_id":ObjectId(paperId),
              "author_id":authorId});
         if paperDoc==None:
-            raise Fun2sayError("Cannot find paper to change order")
+            raise DbapiError("Cannot find paper to change order")
 
         #print paperDoc
         #re-order in db
         for note in paperDoc['notes']:
             if note['order']==startPos:
                 note['order'] = stopPos
-                api.db.messages.update(
+                myappdb.messages.update(
                     {'_id':ObjectId(note['id']), "papers":{"$elemMatch":{"id":paperId }}}, 
                     {'$set':{"papers.$.order":stopPos}}
                     )
             elif note['order']>=min and note['order']<max:
                 note['order']+=incValue
-                api.db.messages.update(
+                myappdb.messages.update(
                     {'_id':ObjectId(note['id']), "papers":{"$elemMatch":{"id":paperId }}},
                     {'$inc':{"papers.$.order":incValue}}
                     )
 
         paperDoc["modified_date"] = int(time.time())
-        status = api.db.papers.update({'_id':paperDoc['_id']}, paperDoc, upsert= False, safe = True)
+        status = myappdb.papers.update({'_id':paperDoc['_id']}, paperDoc, upsert= False, safe = True)
         #print status
 
         modelDict = {}
@@ -1014,8 +1018,8 @@ class OAuth2(Model):
         """
         provider = parameters.get('provider', None)
         if provider == None:
-            raise Fun2sayError("Must specify 'provider' to get_key")
-        oauthDoc = api.db.oauths.find_one({'provider':provider})
+            raise DbapiError("Must specify 'provider' to get_key")
+        oauthDoc = myappdb.oauths.find_one({'provider':provider})
         return {
                 "provider":provider,
                 "app_key":oauthDoc["app_key"], 
@@ -1050,7 +1054,7 @@ class User(Model):
             "invitates": [],
 
         }
-        invitates = api.db.invitates.find({"author_id":doc["_id"]})
+        invitates = myappdb.invitates.find({"author_id":doc["_id"]})
         for i in invitates:
             modelDict["invitates"].append({
                 "code":i["code"],
@@ -1078,16 +1082,16 @@ class User(Model):
         userDoc = None
 
         if provider and user_id_provider:
-            userDoc = api.db.users.find_one({"providers": 
+            userDoc = myappdb.users.find_one({"providers": 
                 { "$elemMatch": {"provider":provider, "id":user_id_provider} } 
                 })
             #print "3:", userDoc
         elif login!=None:
-            userDoc = api.db.users.find_one({"$or": [{"_id":login}, {"email":login}]})
+            userDoc = myappdb.users.find_one({"$or": [{"_id":login}, {"email":login}]})
         elif id != None or email != None:
-            userDoc = api.db.users.find_one({"$or": [{"_id":id}, {"email":email}]})
+            userDoc = myappdb.users.find_one({"$or": [{"_id":id}, {"email":email}]})
         else:
-            raise Fun2sayError("Must specify 'id' or 'email' or 'login' to authenticate user!")
+            raise DbapiError("Must specify 'id' or 'email' or 'login' to authenticate user!")
 
         if not userDoc:
             api.error = "No such user!"
@@ -1112,14 +1116,14 @@ class User(Model):
             upsert = True if upsert=='True' else False
 
         if userid==None and not upsert:
-            raise Fun2sayError("Must specify 'user_id' to update user profile!")
+            raise DbapiError("Must specify 'user_id' to update user profile!")
         else:
             if provider and user_id_provider:
                 userid = str(ObjectId())
 
-        userDoc = api.db.users.find_one({"_id":userid})
+        userDoc = myappdb.users.find_one({"_id":userid})
         if userDoc==None and not upsert:
-            raise Fun2sayError("user %s not found!" % userid)
+            raise DbapiError("user %s not found!" % userid)
 
         reg_date = int(time.time())
         if userDoc==None:
@@ -1149,7 +1153,7 @@ class User(Model):
         if invitation_code != None and invitation_code!="OPENINVITATION":
             userDoc["invitation_code"] = invitation_code
             # disable used invitation code
-            api.db.invitates.update({"code":invitation_code, "used":'False'}, 
+            myappdb.invitates.update({"code":invitation_code, "used":'False'}, 
                                   { '$set':{"used":name, "use_time":reg_date} }, 
                                   multi=True, upsert= False, safe = True);
         locale = parameters.get('locale', None)
@@ -1167,7 +1171,7 @@ class User(Model):
         
         #print "2:", userDoc
 
-        api.db.users.update({"_id":userid}, userDoc, upsert=True)
+        myappdb.users.update({"_id":userid}, userDoc, upsert=True)
 
 
         return cls._gen_model(api, userDoc)
@@ -1207,9 +1211,9 @@ class User(Model):
         userid_provider = parameters.get('user_id_provider', None)
 
         if not userid or not provider or not userid_provider:
-            raise Fun2sayError("remove provider insufficient parameter")
+            raise DbapiError("remove provider insufficient parameter")
 
-        userDoc = api.db.users.find_and_modify({"_id":userid},
+        userDoc = myappdb.users.find_and_modify({"_id":userid},
             { '$pull':{"providers":{"id":userid_provider, "provider": provider}} },
             new = True
         )
@@ -1241,21 +1245,21 @@ class User(Model):
 
         if (userid==None or provider==None
             ):
-            raise Fun2sayError("upsert_provider Fail: userid and provider must not be None")
+            raise DbapiError("upsert_provider Fail: userid and provider must not be None")
 
-        userDoc = api.db.users.find_one({"_id":userid})
+        userDoc = myappdb.users.find_one({"_id":userid})
         if userDoc==None:
-            raise Fun2sayError("user %s not found!" % userid)
+            raise DbapiError("user %s not found!" % userid)
 
         # update only next count/cursor
         if next_count or next_cursor:
             if not userid_provider:
-                raise Fun2sayError("user id for provider must provided for next count/cursor!")
+                raise DbapiError("user id for provider must provided for next count/cursor!")
 
             if not (next_count and next_cursor):
-                raise Fun2sayError("both count/cursor must provided for next count/cursor!")
+                raise DbapiError("both count/cursor must provided for next count/cursor!")
 
-            r = api.db.users.update({"_id":userid,
+            r = myappdb.users.update({"_id":userid,
                 "providers":{
                     "$elemMatch":{"id":userid_provider, "provider": provider }
                     }
@@ -1267,7 +1271,7 @@ class User(Model):
                 }, safe=True, upsert=False)
             #print r
             #like {u'updatedExisting': True, u'connectionId': 85, u'ok': 1.0, u'err': None, u'n': 1}
-            userDoc = api.db.users.find_one({"_id":userid,
+            userDoc = myappdb.users.find_one({"_id":userid,
                 "providers":{
                     "$elemMatch":{"id":userid_provider, "provider": provider }
                     }
@@ -1276,17 +1280,17 @@ class User(Model):
 
         #update entire provider
         if not profile:
-            raise Fun2sayError("their_profile must provided to update provider!")
+            raise DbapiError("their_profile must provided to update provider!")
 
         if not access_token or not expires_in:
-            raise Fun2sayError("access_token and expires_in must provided to update provider!")
+            raise DbapiError("access_token and expires_in must provided to update provider!")
 
         #refine the profile
         profile = cls._pick_sina_weibo_profile(provider, profile)
         if userid_provider:
             #it is provided
             if profile["id"] != usreid_provider:
-                raise Fun2sayError("user id for the provider is mismatched!")
+                raise DbapiError("user id for the provider is mismatched!")
         # now the two are same
         userid_provider = profile["id"]
 
@@ -1295,7 +1299,7 @@ class User(Model):
 
 
         #refer: SO-10277174
-        userDoc = api.db.users.find_one({"_id":userid,
+        userDoc = myappdb.users.find_one({"_id":userid,
             "providers":{
                 "$elemMatch":{"id":userid_provider, "provider": provider }
                 }
@@ -1303,7 +1307,7 @@ class User(Model):
 
         #insert new or update
         if userDoc is None:
-            r = api.db.users.update({"_id":userid},
+            r = myappdb.users.update({"_id":userid},
                 {'$push':{
                     'providers': profile
                     },
@@ -1313,7 +1317,7 @@ class User(Model):
                 }, safe=True, upsert=False)
             #print r
         else:
-            r = api.db.users.update({"_id":userid,
+            r = myappdb.users.update({"_id":userid,
                 "providers":{
                     "$elemMatch":{"id":profile["id"], "provider": provider }
                     }
@@ -1324,7 +1328,7 @@ class User(Model):
                 }, safe=True, upsert=False)
             #print r
 
-        userDoc = api.db.users.find_one({"_id":userid})
+        userDoc = myappdb.users.find_one({"_id":userid})
         return cls._gen_model(api, userDoc)
 
 
@@ -1348,7 +1352,7 @@ class Counter(Model):
         spec = {}
         authorId = parameters.get('author_id', "")
         if authorId=="":
-            raise Fun2sayError("Must specify 'author_id' to add_note!")
+            raise DbapiError("Must specify 'author_id' to add_note!")
         spec["author_id"] = authorId
 
         shared_only = parameters.get('shared_only', None)
@@ -1362,285 +1366,13 @@ class Counter(Model):
         if threadId != "":
             spec["threads"] = {"$elemMatch":{"id":threadId }}
 
-        return api.db.messages.find(spec).count()
+        return myappdb.messages.find(spec).count()
         
 
     @classmethod
     def parse(cls, api, json):
         return json
 
-
-class Syncmtask(Model):
-    """
-    Sync Manager 
-
-    在新浪微博API中，user_timeline的参数：
-    since_id 	false 	int64 	若指定此参数，则返回ID比since_id大的微博（即比since_id时间晚的微博），默认为0。
-    max_id 	false 	int64 	若指定此参数，则返回ID小于或等于max_id的微博，默认为0。 
-
-    db.syncmtasks 集合之中有waiting、pending和finished三种类型
-    - pending：新的任务
-    - running：已经由sync-task开始处理的任务，正在等待结果
-    - finished：任务已经完成
-    """
-
-    @classmethod
-    def _gen_model(cls, taskDoc):
-        return {
-            "id":str(taskDoc["_id"]),
-            "provider":taskDoc['provider'],
-            'user_id':taskDoc['user_id'],
-            'user_id_provider':taskDoc['user_id_provider'],
-            'count': taskDoc['count'],
-            'cursor':taskDoc['cursor'],#previous last for me to start $gt
-            'next_count': taskDoc['count'],
-            'my_last_syncd_idstr':taskDoc['my_last_syncd_idstr'], #my last for next task
-            'pub_time':taskDoc['pub_time'],
-            'finished_time':taskDoc['finished_time'],
-            'state':taskDoc['state'],#pending, running, finished, canceled
-        }
-
-    @classmethod
-    def get_sync_tasks(cls, api, parameters):
-        """
-        """
-        spec = {}
-        count = int(parameters.get('count', 25))
-        user_id = parameters.get('user_id', None)
-        user_id_provider = parameters.get('user_id_provider', None)
-        state = parameters.get('state', None)
-
-        if user_id:
-            spec["user_id"] = user_id
-        provider = parameters.get('provider', None)
-        if provider:
-            spec["provider"] = provider
-        if user_id_provider:
-            spec["user_id_provider"] = user_id_provider
-        if state:
-            spec["state"] = state
-
-        taskDocs = api.db.syncmtasks.find(spec).limit(count)
-        models = []
-        for taskDoc in taskDocs:
-            modelDict = cls._gen_model(taskDoc)
-            models.append(modelDict)
-
-        return tuple(models)
-
-    @classmethod
-    def add_sync_task(cls, api, parameters):
-        """
-        if cursor is None, then check whether the corresponding
-        user-provider pair has been synced.
-
-        新增加的任务状态为：pending
-        """
-        provider = parameters.get('provider', None)
-        user_id = parameters.get('user_id', None)
-        user_id_provider = parameters.get('user_id_provider', None)
-        if provider==None or user_id==None or user_id_provider==None:
-            raise Fun2sayError("add sync task information lose!")
-        count = parameters.get('count', 25)
-
-        cursor = parameters.get('cursor', None)
-        if cursor is None:
-            # not provide last id, judge
-            pending_running = api.db.syncmtasks.find_one({'provider':provider,
-                'user_id':user_id,
-                'user_id_provider':user_id_provider,
-                '$or': [{'state':'pending'}, {'state':'running'}],
-            })
-
-            if pending_running:
-                # no need to add
-                return cls._gen_model(pending_running)
-
-            finished = api.db.syncmtasks.find_one({'provider':provider,
-                'user_id':user_id,
-                'user_id_provider':user_id_provider,
-                'state':'finished',
-            }, sort=[('finished_time', pymongo.DESCENDING)])
-
-            if finished:
-                cursor = finished['my_last_syncd_idstr']
-                count = finished['next_count']
-            else:
-                # sina weibo uses '0' as the beginning of all status
-                cursor = "0"
-        else:
-            existing = api.db.syncmtasks.find_one({'provider':provider,
-                'user_id':user_id,
-                'user_id_provider':user_id_provider,
-                'cursor':cursor,
-            })
-
-            if existing:
-                # already syncd, no need 
-                return cls._gen_model(existing)
-
-        pub_time = int(time.time())
-        state = 'pending'
-
-        ids = api.db.syncmtasks.insert({
-            'provider': provider,
-            'user_id':user_id,
-            'user_id_provider':user_id_provider,
-            'count': count,
-            'cursor':cursor,
-            'next_count':None,
-            'next_cursor':None,
-            'my_last_syncd_idstr':None,
-            'state':'pending',
-            'pub_time': pub_time,
-            'finished_time':None,
-        })
-
-        return cls._gen_model(api.db.syncmtasks.find_one({"_id":ids}))
-
-
-    @classmethod
-    def start_sync_task(cls, api, parameters):
-        print "start_sync_task parameters:", parameters
-        provider = parameters.get('provider', None)
-        user_id = parameters.get('user_id', None)
-        user_id_provider = parameters.get('user_id_provider', None)
-        if provider==None or user_id==None or user_id_provider==None:
-            raise Fun2sayError("start sync task information lose!")
-        api.db.syncmtasks.update({"user_id":user_id,
-            "user_id_provider": user_id_provider,
-            "provider":provider,
-            "state": "pending",
-            }, 
-            {"$set": {"state": "running"}}
-        )
-        syncmtaskDoc = api.db.syncmtasks.find_one({"user_id":user_id,
-            "user_id_provider": user_id_provider,
-            "provider":provider,
-            "state": "running"
-        })
-        return cls._gen_model(syncmtaskDoc)
-
-    @classmethod
-    def finish_sync_task(cls, api, parameters):
-        print "finish_sync_task parameters:", parameters
-        provider = parameters.get('provider', None)
-        user_id = parameters.get('user_id', None)
-        user_id_provider = parameters.get('user_id_provider', None)
-        my_last_syncd_idstr = parameters.get('my_last_syncd_idstr', None)
-        next_cursor = parameters.get('next_cursor', None)
-        count = parameters.get('count', None)
-        if provider==None or user_id==None or user_id_provider==None:
-            raise Fun2sayError("add sync task information lose!")
-
-        syncmtaskDoc = api.db.syncmtasks.find_one({"user_id":user_id,
-            "user_id_provider": user_id_provider,
-            "provider":provider,
-            "state": "running"
-        })
-        if not syncmtaskDoc:
-            raise Fun2sayError("no such task found for updating!")
-
-        syncmtaskDoc["state"] = "finished"
-        syncmtaskDoc["finished_time"] = int(time.time())
-        if count:
-            syncmtaskDoc["count"] = count
-        if my_last_syncd_idstr:
-            syncmtaskDoc["my_last_syncd_idstr"] = my_last_syncd_idstr
-        else:
-            # keep the old cursor
-            syncmtaskDoc["my_last_syncd_idstr"] = syncmtaskDoc["cursor"]
-
-        syncmtaskDoc["next_cursor"] = next_cursor
-        if next_cursor=="0":
-            syncmtaskDoc["next_count"] = 25
-        else:
-            syncmtaskDoc["next_count"] = syncmtaskDoc["count"] * 2
-
-        #print syncmtaskDoc
-
-        api.db.syncmtasks.save(syncmtaskDoc)
-
-        #if has more, then start a new task
-        if next_cursor!="0":
-            # publish a new sync task for this provider-connection
-            ids = api.db.syncmtasks.insert({
-                'provider': provider,
-                'user_id':user_id,
-                'user_id_provider':user_id_provider,
-                'count': syncmtaskDoc["next_count"],
-                'cursor':syncmtaskDoc["my_last_syncd_idstr"],
-                'next_count':None,
-                'next_cursor':None,
-                'my_last_syncd_idstr':None,
-                'state':'pending',
-                'pub_time': int(time.time()),
-                'finished_time':None,
-            })
-
-
-        return cls._gen_model(syncmtaskDoc)
-
-    @classmethod
-    def parse(cls, api, json):
-        syncmtask = cls(api)
-        for k, v in json.items():
-            setattr(syncmtask, k, v)
-        
-        return syncmtask
-
-class Webac(Model):
-    @classmethod
-    def _gen_model(cls, api, parameters, doc):
-        #print "_gen_model"
-        timenow = int(time.time())
-        # 虽然提示用户的时候说是耐心等待5秒钟，但是系统内容只等待4秒钟
-        # 这样稍微提升一点用户使用感觉
-        allowed = True if (timenow - int(doc["last_time"]))>=4 else False
-        
-
-        doc["allowed"] = allowed
-        doc["last_time"] = timenow        
-        api.db.webacs.save(doc)
-
-        return {"allowed":allowed, 
-                "ip": doc["ip"]
-                }
-
-    @classmethod
-    def _gen_deny_model(cls):   
-        #print "_gen_deny_model"     
-
-        return {"allowed":False}
-
-    @classmethod
-    def _gen_allow_model(cls):        
-        #print "_gen_allow_model"
-        return {"allowed":True}
-
-    @classmethod
-    def check_request_interval(cls, api, parameters):
-        #print "check_request_interval parameters:", parameters
-        userip = parameters.get('ip', None)
-        #print "userip"
-        if not userip:
-            return cls._gen_deny_model()
-
-        acdoc = api.db.webacs.find_one({"ip": userip})
-        if not acdoc:
-            api.db.webacs.insert({"last_time":int(time.time()), 
-                "ip": userip})
-            return cls._gen_allow_model()
-
-        return cls._gen_model(api, parameters, acdoc)
-
-    @classmethod
-    def parse(cls, api, json):
-        webac = cls(api)
-        for k, v in json.items():
-            setattr(webac, k, v)
-        
-        return webac
 
 class ModelFactory(object):
     """
@@ -1654,10 +1386,7 @@ class ModelFactory(object):
     thread = Thread
     paper = Paper
     list = List
-    oauth2 = OAuth2
     user = User
-    syncmtask = Syncmtask
-    webac = Webac
 
     json = JSONModel
     ids = IDModel

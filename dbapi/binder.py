@@ -1,13 +1,13 @@
-# Fun2say
+# Dbapi
 # Copyright 2012 Brent Jiang
 # See LICENSE for details.
 
 import time
 import re
 
-from fun2say.error import Fun2sayError
-from fun2say.utils import convert_to_utf8_str
-from fun2say.models import Model
+from dbapi.error import DbapiError
+from dbapi.utils import convert_to_utf8_str
+from dbapi.models import Model
 
 
 def bind_api(**config):
@@ -33,13 +33,13 @@ def bind_api(**config):
                 try:
                     self.parameters[self.allowed_param[idx]] = convert_to_utf8_str(arg)
                 except IndexError:
-                    raise Fun2sayError('Too many parameters supplied!')
+                    raise DbapiError('Too many parameters supplied!')
 
             for k, arg in kargs.items():
                 if arg is None:
                     continue
                 if k in self.parameters:
-                    raise Fun2sayError('Multiple values for parameter %s supplied!' % k)
+                    raise DbapiError('Multiple values for parameter %s supplied!' % k)
 
                 self.parameters[k] = convert_to_utf8_str(arg)
 

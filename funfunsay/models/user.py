@@ -8,9 +8,11 @@ from flask.ext.login import (UserMixin, login_user, current_user, logout_user)
 import pymongo
 from pymongo.objectid import ObjectId
 import time
+from pymongo import Connection
+connection = Connection()
+myappdb = connection['ffsdb']
 
 from funfunsay.utils import get_current_time, VARCHAR_LEN_128
-from funfunsay.extensions import fun2say
 
 class User(UserMixin):
     def __init__(self, userDoc=None, **kwargs):
@@ -45,8 +47,8 @@ class User(UserMixin):
         """
         used to load User Model derived from flask.ext.login.UserMixedIn
         """
-        userDoc = fun2say.api.get_user_profile(id=userid)
-        if fun2say.api.success:
+        userDoc = current_app.dbapi.get_user_profile(id=userid)
+        if current_app.dbapi.success:
             user = cls(userDoc)
             return user
         else:
@@ -57,7 +59,7 @@ class User(UserMixin):
         """
         used to fetch other user's information
         """
-        userDoc = fun2say.api.get_user_profile(id=userid)
+        userDoc = current_app.dbapi.get_user_profile(id=userid)
         return userDoc
 
     #def _get_password(self):
@@ -153,10 +155,10 @@ class User(UserMixin):
     def authenticate(cls, login, password):
         #print ": authenticate(cls, login, password):"
         error = None
-        #print "g.db: ", g.db
-        user_doc = fun2say.api.get_user_profile(login=login)
+        #print "myappdb: ", myappdb
+        user_doc = current_app.dbapi.get_user_profile(login=login)
 
-        if fun2say.api.success==True:
+        if current_app.dbapi.success==True:
             authenticated = check_password_hash(user_doc.pw_hash, password)
             if not authenticated:
                 error = 'Invalid password'
@@ -190,7 +192,7 @@ class User(UserMixin):
 
     @classmethod
     def get_latest_message(cls, userid):
-        return g.db.messages.find_one({"author_id":userid}, sort=[("pub_date", pymongo.DESCENDING)])
+        return myappdb.messages.find_one({"author_id":userid}, sort=[("pub_date", pymongo.DESCENDING)])
 
     def get_icon_url(self):
         #return self.get_profile().get("icon_url", "")
@@ -204,7 +206,7 @@ class User(UserMixin):
         if not current_user.is_authenticated():
             return 0
 
-        vote_doc = g.db.votes.find_one({'message_id':messageid, 'user_id':current_user.id})
+        vote_doc = myappdb.votes.find_one({'message_id':messageid, 'user_id':current_user.id})
         if vote_doc is None:
             return 0
 
@@ -223,24 +225,24 @@ class User(UserMixin):
         if not current_user.is_authenticated():
             return 0
 
-        message_doc = g.db.messages.find_one({'_id':messageid})
+        message_doc = myappdb.messages.find_one({'_id':messageid})
 
         # cannot vote self!
         if current_user.id == message_doc['author_id']:
             return 0, int(message_doc['score'])
 
-        vote_doc = g.db.votes.find_one({'message_id':messageid, 'user_id':current_user.id})
+        vote_doc = myappdb.votes.find_one({'message_id':messageid, 'user_id':current_user.id})
         #print vote_doc
         if vote_doc is None:
             vote_doc = User.new_vote_document(current_user.id, messageid, voteval)
-            g.db.votes.insert(vote_doc, safe=True)
+            myappdb.votes.insert(vote_doc, safe=True)
             if voteval==1:
                 message_doc['vote_up_count'] = message_doc['vote_up_count'] + 1
                 message_doc['score'] = message_doc['score'] + 1
             else:
                 message_doc['vote_down_count'] = message_doc['vote_down_count'] + 1
                 message_doc['score'] = message_doc['score'] - 1
-            g.db.messages.save(message_doc, safe=True)
+            myappdb.messages.save(message_doc, safe=True)
             return voteval, int(message_doc['score'])
 
         if vote_doc['vote']<>voteval:
@@ -254,7 +256,7 @@ class User(UserMixin):
                 message_doc['score'] = message_doc['score'] + 2
 
             vote_doc['vote'] = voteval
-            g.db.votes.save(vote_doc, safe=True)
+            myappdb.votes.save(vote_doc, safe=True)
         else:
             if vote_doc['vote']==1:
                 message_doc['vote_up_count'] = message_doc['vote_up_count'] - 1
@@ -263,8 +265,8 @@ class User(UserMixin):
                 message_doc['vote_down_count'] = message_doc['vote_down_count'] - 1
                 message_doc['score'] = message_doc['score'] + 1
             voteval = 0
-            g.db.votes.remove(vote_doc, safe=True)
+            myappdb.votes.remove(vote_doc, safe=True)
 
-        g.db.messages.save(message_doc, safe=True)
+        myappdb.messages.save(message_doc, safe=True)
 
         return voteval, int(message_doc['score'])

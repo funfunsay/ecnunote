@@ -1,4 +1,4 @@
-# Fun2say
+# Dbapi
 # Copyright 2012 Brent Jiang
 # See LICENSE for details.
 
@@ -306,7 +306,7 @@ class MemCacheCache(Cache):
 class RedisCache(Cache):
     '''Cache running in a redis server'''
 
-    def __init__(self, client, timeout=60, keys_container = 'fun2say:keys', pre_identifier = 'tweepy:'):
+    def __init__(self, client, timeout=60, keys_container = 'dbapi:keys', pre_identifier = 'tweepy:'):
         Cache.__init__(self, timeout)
         self.client = client
         self.keys_container = keys_container
@@ -318,7 +318,7 @@ class RedisCache(Cache):
 
     def store(self, key, value):
         '''Store the key, value pair in our redis server'''
-        # Prepend fun2say to our key, this makes it easier to identify tweepy keys in our redis server
+        # Prepend dbapi to our key, this makes it easier to identify tweepy keys in our redis server
         key = self.pre_identifier + key
         # Get a pipe (to execute several redis commands in one step)
         pipe = self.client.pipeline()

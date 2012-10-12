@@ -57,9 +57,6 @@
           </div>
         {% elif login_form is defined %}
         <ul class="pull-right">
-            <li class="login sina"><a title="{{_('Login use Sina Weibo')}}" href="/connect/sina">{{_("Sina Weibo")}}</a></li>
-        </ul>
-        <ul class="pull-right">
             <li><a class="btn" title="{{_('Sign Up')}}" href="{{ url_for('homesite.register') }}">{{_("Sign Up")}}</a></li>
         </ul>
         <form class='navbar-form pull-right' method='POST' action="{{ url_for('homesite.login') }}">

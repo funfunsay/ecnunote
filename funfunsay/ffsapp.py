@@ -15,15 +15,15 @@ from flask import (Flask, request, render_template, g, session, url_for)
 from flask.ext.babel import Babel
 from funfunsay.config import DefaultConfig, APP_NAME
 from funfunsay.views import homesite, funnote
-from funfunsay.extensions import cache, fun2say, vpymongo
+from funfunsay.extensions import cache
 from flask.ext.login import login_user, current_user, logout_user
 from funfunsay import utils
 from funfunsay.models import User
-from flask.ext.fun2say import Fun2say
 from funfunsay.utils import html2text
 from flask.ext.babel import gettext as _
 from funfunsay.utils import randbytes
 from flask.ext.login import session_protected
+from dbapi import API
 
 
 # For import *
@@ -66,6 +66,8 @@ def create_app(config=None, app_name=None, blueprints=None):
     #must configure hook after extensions is configured!
     configure_hook(app)
 
+    app.dbapi = API()
+
 
     # add some filters to jinja
     app.jinja_env.filters['datetimeformat'] = utils.format_datetime
@@ -98,12 +100,6 @@ def configure_extensions(app):
     #store = DictStore()
     ## this will replace the app's session handling
     #KVSessionExtension(store, app)
-
-    #fun2say
-    vpymongo.init_app(app, 
-                    [{"name":"messages", "field":"text"}],
-                    'FUNFUNSAY')
-    fun2say.init_app(app, vpymongo.db)
 
     # cache
     cache.init_app(app)
@@ -164,7 +160,6 @@ def configure_hook(app):
     @app.before_request
     def before_request():
         g.MAX_LEN_P = MAX_LEN_P
-        g.db = vpymongo.db # a link to g.mongo.db to make it more convinient
         
 
     @app.teardown_request
@@ -178,7 +173,7 @@ def configure_hook(app):
         #    if current_user.id:
         #        session_id = current_user.session_id if current_user.session_id else randbytes(8)
         #        response.set_cookie('user_id', "%s:%s" % (current_user.id, session_id))
-        #        fun2say.api.update_user_profile(userid=current_user.id, session_id=session_id)
+        #        current_app.dbapi.update_user_profile(userid=current_user.id, session_id=session_id)
         #
         #    else:
         #        response.set_cookie('user_id', None)

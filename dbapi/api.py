@@ -1,14 +1,13 @@
-﻿# Fun2say
+﻿# Dbapi
 # Copyright 2012 Brent Jiang
 # See LICENSE for details.
 import os
 import mimetypes
 
-from fun2say.binder import bind_api
-from fun2say.error import Fun2sayError
-from fun2say.parsers import ModelParser, RawParser
-from fun2say.utils import list_to_csv
-import vpymongo
+from dbapi.binder import bind_api
+from dbapi.error import DbapiError
+from dbapi.parsers import ModelParser, RawParser
+from dbapi.utils import list_to_csv
 from pymongo.objectid import ObjectId
 
 # For import *
@@ -19,13 +18,12 @@ __all__ = ['API']
 class API(object):
     """description of class"""
 
-    def __init__(self, db,
+    def __init__(self, 
             parser=None):
         """
         :parameter:
           - 'db': an instance of :class:`vpymongo.connection.Connection`
         """
-        self.db = db
         self.parser = parser or ModelParser()
         self.clear()
 
@@ -54,42 +52,6 @@ class API(object):
     @success.setter
     def success(self, value):
         self._success = value
-
-    """
-    Get app_key and app_secret of Funfunsay.com from providers.
-
-    :parameters:
-     - 'provider': the uri of provider website
-     currently only support 'open.weibo.com' for SinaWeibo.
-    """
-    get_oauth2_key = bind_api(
-        path = 'get_oauth2_key',
-        payload_type = 'oauth2', payload_list = False,
-        allowed_param = ['provider']
-        )
-
-
-    """
-    """
-    upsert_provider = bind_api(
-        path = 'upsert_provider',
-        payload_type = 'user', payload_list = False,
-        allowed_param = ['user_id', 'provider', 
-            # these 3 params for update whole profile
-            'their_profile','access_token', 'expires_in', 
-            # these 2 params for update state
-            'next_count', 'next_cursor']
-        )
-
-    """
-    remove_provider
-    """
-    remove_provider = bind_api(
-        path = 'remove_provider',
-        payload_type = 'user', payload_list = False,
-        allowed_param = ['user_id', 'provider', 
-            'user_id_provider']
-        )
 
 
     """
