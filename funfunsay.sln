@@ -7,14 +7,6 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "funfunsay", "funfunsay\funf
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "shell", "shell.pyproj", "{1A71D8EB-52B3-464C-9734-B9EB7D9C3739}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "flask-vpymongo", "flask-vPymongo\flask-vpymongo.pyproj", "{DAEF5DC3-6C44-4473-92F8-E5E3F37DABEC}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "flask-fun2say", "flask-fun2say\flask-fun2say.pyproj", "{85ECD850-E28B-4281-ADEA-1FBA03AF85F6}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "fun2say", "fun2say\fun2say.pyproj", "{262CC328-A2FE-48AA-A772-1E1931263516}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "vpymongo", "vpymongo\vpymongo.pyproj", "{E9DA25E1-E1C0-475E-B25E-4BB0B4AD2AEB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,14 +17,6 @@ Global
 		{6DC45C75-1082-4C5A-9E76-B076E67DA054}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A71D8EB-52B3-464C-9734-B9EB7D9C3739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A71D8EB-52B3-464C-9734-B9EB7D9C3739}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DAEF5DC3-6C44-4473-92F8-E5E3F37DABEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DAEF5DC3-6C44-4473-92F8-E5E3F37DABEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{85ECD850-E28B-4281-ADEA-1FBA03AF85F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{85ECD850-E28B-4281-ADEA-1FBA03AF85F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{262CC328-A2FE-48AA-A772-1E1931263516}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{262CC328-A2FE-48AA-A772-1E1931263516}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9DA25E1-E1C0-475E-B25E-4BB0B4AD2AEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9DA25E1-E1C0-475E-B25E-4BB0B4AD2AEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
