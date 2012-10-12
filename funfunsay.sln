@@ -7,6 +7,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "funfunsay", "funfunsay\funf
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "shell", "shell.pyproj", "{1A71D8EB-52B3-464C-9734-B9EB7D9C3739}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "dbapi", "dbapi\dbapi.pyproj", "{18F2A914-5524-4580-B74E-47D04937C5EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,8 @@ Global
 		{6DC45C75-1082-4C5A-9E76-B076E67DA054}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A71D8EB-52B3-464C-9734-B9EB7D9C3739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A71D8EB-52B3-464C-9734-B9EB7D9C3739}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18F2A914-5524-4580-B74E-47D04937C5EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F2A914-5524-4580-B74E-47D04937C5EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
