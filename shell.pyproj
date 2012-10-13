@@ -32,7 +32,7 @@
     <Content Include="dist\settings.cfg" />
     <Content Include="funfunsay.wsgi" />
     <Content Include="MANIFEST.in" />
-    <Content Include="README-funfunsay" />
+    <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dist\" />
