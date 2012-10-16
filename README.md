@@ -1,4 +1,4 @@
-#ecnunote
+ï»¿#ecnunote
 
 ecnu note application with an android client.
 
@@ -29,53 +29,53 @@ Compile with babel: ::
     
     $ python setup.py compile_catalog --directory fbone/translations --locale zh -f
 
-Ä¿Ç°Ö»Ö§³Ö½«Êı¾İ¿â°²×°ÔÚd:\mongodb\data\dbÄ¿Â¼ÏÂ¡£NTServiceÒÀÀµÓÚ´ËÂ·¾¶¡£
+ç›®å‰åªæ”¯æŒå°†æ•°æ®åº“å®‰è£…åœ¨d:\mongodb\data\dbç›®å½•ä¸‹ã€‚NTServiceä¾èµ–äºæ­¤è·¯å¾„ã€‚
 		
-1.ÒÔ¹ÜÀíÔ±·½Ê½£¬ÔËĞĞcmd.exe£¬°²×°FirstService·şÎñ£ºÓÃÓÚ±ÜÃâÏµÍ³Òì³£¹Ø±ÕÊ±mongodb2.0µÄÎŞ·¨×Ô¶¯Æô¶¯µÄÎÊÌâ¡£
+1.ä»¥ç®¡ç†å‘˜æ–¹å¼ï¼Œè¿è¡Œcmd.exeï¼Œå®‰è£…FirstServiceæœåŠ¡ï¼šç”¨äºé¿å…ç³»ç»Ÿå¼‚å¸¸å…³é—­æ—¶mongodb2.0çš„æ— æ³•è‡ªåŠ¨å¯åŠ¨çš„é—®é¢˜ã€‚
 		"NTService.exe -i"
-2.°²×°MongoDB·şÎñ£º
+2.å®‰è£…MongoDBæœåŠ¡ï¼š
 		"D:\mongodb\bin\mongod.exe" --install --dbpath  "d:\MongoDB\data\db"  --logpath  "d:\MongoDB\data\logs\ffs.log"  --directoryperdb 
-3.ÔÙÔËĞĞ£º 
+3.å†è¿è¡Œï¼š 
 		"sc config MongoDB depend= FirstService"
 		"net start MongoDB"
-×¢Òâ¡°=¡±ºÍFirstServiceÖĞ¼äÓĞ¸ö¿Õ¸ñ£¬·ñÔòÃüÁîÊ§°Ü¡£
-È¥µô--logappend¡£
-ÓÉÓÚ°²×°·şÎñĞèÒª¹ÜÀíÔ±È¨ÏŞ£¬ËùÒÔÇëÒÔ¹ÜÀíÔ±·½Ê½ÔËĞĞ¿ØÖÆÌ¨cmd.exe³ÌĞò¡£
+æ³¨æ„â€œ=â€å’ŒFirstServiceä¸­é—´æœ‰ä¸ªç©ºæ ¼ï¼Œå¦åˆ™å‘½ä»¤å¤±è´¥ã€‚
+å»æ‰--logappendã€‚
+ç”±äºå®‰è£…æœåŠ¡éœ€è¦ç®¡ç†å‘˜æƒé™ï¼Œæ‰€ä»¥è¯·ä»¥ç®¡ç†å‘˜æ–¹å¼è¿è¡Œæ§åˆ¶å°cmd.exeç¨‹åºã€‚
  
-4.Babel·­Òë
-4.1ÉèÖÃ Babel
-½ÓÏÂÀ´ÎÒÃÇÒª×öµÄÊÇ babel µÄÅäÖÃ¡£ÔÚ hello.py µÄÍ¬¼¶Ä¿Â¼´´½¨Ò»¸ö½Ğ babel.cfg µÄÎÄ¼ş£¬ÄÚÈİÈçÏÂ£º
+4.Babelç¿»è¯‘
+4.1è®¾ç½® Babel
+æ¥ä¸‹æ¥æˆ‘ä»¬è¦åšçš„æ˜¯ babel çš„é…ç½®ã€‚åœ¨ hello.py çš„åŒçº§ç›®å½•åˆ›å»ºä¸€ä¸ªå« babel.cfg çš„æ–‡ä»¶ï¼Œå†…å®¹å¦‚ä¸‹ï¼š
 
     [python: **.py]
     [jinja2: **/templates/**.html]
     extensions=jinja2.ext.autoescape,jinja2.ext.with_
 
-4.2ÇĞ»»µ½ÏîÄ¿µÄ¡°funfunsay\¡±Ä¿Â¼ÏÂ£¨¸ÃÄ¿Â¼°üº¬translationsºÍtemplates×ÓÄ¿Â¼£©¡£
+4.2åˆ‡æ¢åˆ°é¡¹ç›®çš„â€œfunfunsay\â€ç›®å½•ä¸‹ï¼ˆè¯¥ç›®å½•åŒ…å«translationså’Œtemplateså­ç›®å½•ï¼‰ã€‚
 
-4.3Éú³É messages.pot ÎÄ¼ş£¬¼´Éú³É·­ÒëÄ£°å(Win)
+4.3ç”Ÿæˆ messages.pot æ–‡ä»¶ï¼Œå³ç”Ÿæˆç¿»è¯‘æ¨¡æ¿(Win)
 
     "c:\Python27\Scripts\pybabel.exe extract -F babel.cfg -o messages.pot ."
-»ò(Linux)
+æˆ–(Linux)
 
     "$ pybabel extract -F babel.cfg -o messages.pot ."
-Èç¹ûÊ¹ÓÃÁËlazy_gettext() º¯Êı:
+å¦‚æœä½¿ç”¨äº†lazy_gettext() å‡½æ•°:
 
     "$ c:\Python27\Scripts\pybabel.exe extract -F babel.cfg -k lazy_gettext -o messages.pot ."
 
-4.4¸ù¾İÉú³ÉµÄ.pot³õÊ¼»¯zh_CNµÄ·­ÒëÎÄ¼ş
+4.4æ ¹æ®ç”Ÿæˆçš„.potåˆå§‹åŒ–zh_CNçš„ç¿»è¯‘æ–‡ä»¶
 
     "c:\Python27\Scripts\pybabel.exe init -i messages.pot -d translations -l zh_CN"
-ÒªÈ·±£ flask ÄÜÕÒµ½·­ÒëÄÚÈİ£¬translationsÎÄ¼ş¼ĞÒªºÍ templates ÎÄ¼ş¼ĞÔÚÍ¬Ò»¸öÄ¿Â¼ÖĞ¡£
-È»ºó¾Í¿ÉÒÔÔÚ.poÎÄ¼şÖĞ±à¼­·­Òë£¨²»Òª±à¼­.potµÄÎÄ¼ş£©·­Òë½á¹û£º
+è¦ç¡®ä¿ flask èƒ½æ‰¾åˆ°ç¿»è¯‘å†…å®¹ï¼Œtranslationsæ–‡ä»¶å¤¹è¦å’Œ templates æ–‡ä»¶å¤¹åœ¨åŒä¸€ä¸ªç›®å½•ä¸­ã€‚
+ç„¶åå°±å¯ä»¥åœ¨.poæ–‡ä»¶ä¸­ç¼–è¾‘ç¿»è¯‘ï¼ˆä¸è¦ç¼–è¾‘.potçš„æ–‡ä»¶ï¼‰ç¿»è¯‘ç»“æœï¼š
 
-4.5È»ºó±àÒëÉú³É.moÎÄ¼ş
+4.5ç„¶åç¼–è¯‘ç”Ÿæˆ.moæ–‡ä»¶
 
     "c:\Python27\Scripts\pybabel.exe compile -d translations"
 
-Èç¹ûÖ´ĞĞ±àÒëÃüÁîºó³öÏÖ´íÎó£º¡°UnicodeDecodeError: 'utf8' codec can't decode byte 0xbc in position 8: invalid start byte¡±£¬ÇëÊÖ¶¯½«.poÎÄ¼şÁí´æÎªutf-8±àÂëºóÔÙÖ´ĞĞ¡£
+å¦‚æœæ‰§è¡Œç¼–è¯‘å‘½ä»¤åå‡ºç°é”™è¯¯ï¼šâ€œUnicodeDecodeError: 'utf8' codec can't decode byte 0xbc in position 8: invalid start byteâ€ï¼Œè¯·æ‰‹åŠ¨å°†.poæ–‡ä»¶å¦å­˜ä¸ºutf-8ç¼–ç åå†æ‰§è¡Œã€‚
 
-4.6Èç¹ûĞèÒª¸üĞÂ·­Òë£¬ÔòÊ×ÏÈĞèÒªÓÃÇ°Ãæ4.3µÄÃüÁîÖØĞÂÉú³É messages.pot ÎÄ¼ş£¬È»ºóÊ¹ÓÃÏÂÃæµÄÃüÁî½«¸üĞÂµÄÄÚÈİ merge µ½Ô­À´µÄ·­ÒëÎÄ¼ş£¨.po£©ÖĞ£º
+4.6å¦‚æœéœ€è¦æ›´æ–°ç¿»è¯‘ï¼Œåˆ™é¦–å…ˆéœ€è¦ç”¨å‰é¢4.3çš„å‘½ä»¤é‡æ–°ç”Ÿæˆ messages.pot æ–‡ä»¶ï¼Œç„¶åä½¿ç”¨ä¸‹é¢çš„å‘½ä»¤å°†æ›´æ–°çš„å†…å®¹ merge åˆ°åŸæ¥çš„ç¿»è¯‘æ–‡ä»¶ï¼ˆ.poï¼‰ä¸­ï¼š
 
 	"c:\Python27\Scripts\pybabel.exe update -i messages.pot -d translations"
 
-µ±È»×îºó»¹ÊÇÒªÓÃ4.5µÄÃüÁîÖØĞÂÉú³É.moÎÄ¼ş¡£
+å½“ç„¶æœ€åè¿˜æ˜¯è¦ç”¨4.5çš„å‘½ä»¤é‡æ–°ç”Ÿæˆ.moæ–‡ä»¶ã€‚
