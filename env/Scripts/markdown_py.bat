@@ -1,0 +1,1 @@
+@"D:\dev\ecnunote\env\Scripts\python.exe" "D:\dev\ecnunote\env\Scripts\markdown_py" %*
