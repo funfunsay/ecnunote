@@ -11,7 +11,7 @@
 # - add html escape/unescape 
 
 import pymongo
-from pymongo.objectid import ObjectId
+from bson.objectid import ObjectId
 import time
 import sys
 from dbapi.error import DbapiError
