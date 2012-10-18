@@ -79,3 +79,9 @@ Compile with babel: ::
 	"c:\Python27\Scripts\pybabel.exe update -i messages.pot -d translations"
 
 当然最后还是要用4.5的命令重新生成.mo文件。
+
+##~Virtualenv
+虽然可以很方便的自己创建一个virtualenv的目录，因此一般是不推荐复制virtualenv的目录的（我们把它放进git其实也就等于是复制）
+为了让不同平台的开发者（我们现在就包括Android开发、Python Web开发）便于使用相同的测试环境，我们决定将virtualenv包含进我们的代码中。这样每个开发者都可以使用virtualenv中的Python环境进行开发。这样也可以统一所有开发者的Python环境。不过本机仍然需要安装Python，我们目前是使用2.7.3版本，请安装在为“C:\Python27”路径。
+另外，在Windows下，如果你的源代码的根目录不是“d:\dev\ecnunote”，需要修改env目录下的activate.bat文件，把第一行改为你的代码目录——这是容易引起多个开发者提交代码冲突的地方。
+
