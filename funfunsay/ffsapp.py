@@ -14,7 +14,7 @@ from hashlib import md5
 from flask import (Flask, request, render_template, g, session, url_for)
 from flask.ext.babel import Babel
 from funfunsay.config import DefaultConfig, APP_NAME
-from funfunsay.views import homesite, funnote
+from funfunsay.views import homesite, funnote, notes, threads, users, search
 from funfunsay.extensions import cache, mongo
 from flask.ext.login import login_user, current_user, logout_user
 from funfunsay import utils
@@ -32,6 +32,7 @@ __all__ = ['create_app']
 DEFAULT_BLUEPRINTS = (
     homesite,
     funnote,
+    notes, threads, users, search
 )
 
 MAX_LEN_P = 100 #max text length for a principle

@@ -18,7 +18,7 @@ def run():
     #app.run()
     #@faq:allow internet access
     #for test OAuth2
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=8080)
 
 
 

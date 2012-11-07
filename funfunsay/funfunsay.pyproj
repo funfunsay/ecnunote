@@ -41,6 +41,7 @@
     <Compile Include="utils\__init__.py" />
     <Compile Include="views\funnote.py" />
     <Compile Include="views\homesite.py" />
+    <Compile Include="views\restapi.py" />
     <Compile Include="views\pagination.py" />
     <Compile Include="views\__init__.py" />
     <Compile Include="__init__.py" />

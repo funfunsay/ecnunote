@@ -95,6 +95,7 @@ class ModelParser(JSONParser):
         payload = self.json_lib.dumps( model.handler(method.path, method.api, method.parameters) )
 
         return self.parse(method, payload)
+        #return payload
 
     def parse(self, method, payload):
         try:
