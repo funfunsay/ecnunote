@@ -8,7 +8,7 @@ from dbapi.binder import bind_api
 from dbapi.error import DbapiError
 from dbapi.parsers import ModelParser, RawParser
 from dbapi.utils import list_to_csv
-from bson.objectid import ObjectId
+import bson.objectid
 
 # For import *
 __all__ = ['API']

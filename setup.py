@@ -25,12 +25,7 @@ setup(
 		'Flask-Babel',
 		'Flask-Cache',
 		'Flask-Login',
-        'Flask-vPyMongo',
-        'Flask-Fun2Say',
         'Flask-Markdown',
-        'flask-oauth',
-        'flask-kvsession',
-        'mongoengine',
-        'flask_mongoengine',
+        'flask-pymongo',
 	]
 )

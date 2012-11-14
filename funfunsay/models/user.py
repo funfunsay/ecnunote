@@ -6,7 +6,7 @@ from werkzeug import (generate_password_hash, check_password_hash,
                       cached_property)
 from flask.ext.login import (UserMixin, login_user, current_user, logout_user)
 import pymongo
-from bson.objectid import ObjectId
+import bson.objectid
 import time
 from funfunsay.extensions import mongo
 

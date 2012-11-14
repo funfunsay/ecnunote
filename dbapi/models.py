@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # Dbapi
 # Copyright 2012 Brent Jiang
 # See LICENSE for details.
@@ -34,8 +34,8 @@ class ResultSet(list):
 
 class Model(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, api=None):
+        self._api = api
 
     def __getstate__(self):
         # pickle
@@ -581,7 +581,7 @@ class Note(Model):
 
     @classmethod
     def parse(cls, api, json):
-        note = cls()
+        note = cls(api)
         #print json
         for k, v in json.items():
 
@@ -720,7 +720,7 @@ class Thread(Model):
 
     @classmethod
     def parse(cls, api, json):
-        thread = cls()
+        thread = cls(api)
         for k, v in json.items():
             setattr(thread, k, v)
         
@@ -927,7 +927,7 @@ class Paper(Model):
 
     @classmethod
     def parse(cls, api, json):
-        paper = cls()
+        paper = cls(api)
         for k, v in json.items():
             setattr(paper, k, v)
         
@@ -1028,7 +1028,7 @@ class OAuth2(Model):
 
     @classmethod
     def parse(cls, api, json):
-        oauth2 = cls()
+        oauth2 = cls(api)
         for k, v in json.items():
             setattr(oauth2, k, v)
         
@@ -1332,7 +1332,7 @@ class User(Model):
 
     @classmethod
     def parse(cls, api, json):
-        user = cls()
+        user = cls(api)
         for k, v in json.items():
             setattr(user, k, v)
         
